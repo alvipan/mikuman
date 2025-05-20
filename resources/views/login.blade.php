@@ -9,17 +9,23 @@
         </div>
         <div class="card-body">
             @if($errors->any())
-            <div class="alert alert-soft alert-error p-2">{{ $errors->first() }}</div>
+            <x-alert type="error" message="{{$errors->first()}}" icon="tabler--alert-circle"/>
             @endif
             <form action="" method="post">
                 @csrf
-                <div class="w-full mb-3">
+                <div class="mb-3">
                     <label class="label-text" for="username">Userame</label>
-                    <input type="text" placeholder="mikuman" class="input" name="username" id="username" />
+                    <div class="input">
+                        <span class="icon-[tabler--user] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
+                        <input type="text" placeholder="mikuman" class="grow" name="username" id="username"/>
+                    </div>
                 </div>
                 <div class="w-full mb-4">
                     <label class="label-text" for="password">Password</label>
-                    <input type="password" placeholder="*******" class="input" name="password" id="password" />
+                    <div class="input">
+                        <span class="icon-[tabler--lock] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
+                        <input type="password" placeholder="*******" class="grow" name="password" id="password" autocomplete="new-password"/>
+                    </div>
                 </div>
                 <button class="btn btn-primary w-full">Login</button>
             </form>

@@ -6,11 +6,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 use App\Models\User;
-
 use App\Http\Controllers\Admin\RouterController;
 
-Route::match(['post','get'],'/', function (Request $request) {
-
+Route::match(['post','get'],'/', function (Request $request) 
+{
     $user = User::firstOrCreate(
         ['id' => '1'],
         ['username' => 'mikuman', 'password' => Hash::make('mikuman')]
@@ -35,13 +34,19 @@ Route::match(['post','get'],'/', function (Request $request) {
     ]);
 })->middleware('guest')->name('login');
 
-Route::get('/logout', function(Request $request) {
+Route::get('/logout', function(Request $request) 
+{
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     return redirect('/');
 });
 
-Route::middleware('auth')->controller(RouterController::class)->group(function() {
+Route::middleware('auth')->controller(RouterController::class)->group(function() 
+{
+    Route::match(['get','post'], '/routers/add', 'add');
+    Route::match(['get','post'], '/routers/edit/{router}', 'edit');
     Route::get('/routers', 'view')->name('dashboard');
+    Route::get('/routers/connect', 'connect');
+    Route::post('/routers/delete', 'delete');
 });

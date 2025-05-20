@@ -16,6 +16,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
-        "flyonui": "^2.1.0"
+        "flyonui": "^2.1.0",
+        "jquery": "^3.7.1"
     }
 }
