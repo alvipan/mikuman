@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/alvipan/mikuman/blob/main/public/screenshot.png" width="400" alt="Laravel Logo">
+    <img src="https://github.com/alvipan/mikuman/blob/main/public/screenshot.png" alt="Laravel Logo">
 </p>
 
 Mikuman (Mikrotik User Manager) is an application inspired by its predecessor Mikhmon. It is a web-based application to manage Mikrotik users, both Hotspot and PPoE.
