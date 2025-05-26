@@ -8,30 +8,40 @@ use RouterOS\Query;
 
 class Mikrotik
 {
-    public static function connect($routerId) {
+    protected static $client;
 
-        $router = Router::find($routerId);
-
-        if ($router === null) {
+    public static function connect(Router $router) 
+    {
+        try {
+            self::$client = new Client([
+                'host' => $router->host,
+                'user' => $router->user,
+                'pass' => $router->pass,
+                'port' => 8728,
+            ]);
+            return true;
+        } catch (\Throwable $e) {
             return false;
         }
-
-        $client = new Client([
-            'host' => $router->host,
-            'user' => $router->user,
-            'pass' => $router->pass,
-            'port' => 8728,
-        ]);
-
-        return true;
     }
 
-    private function request($path, $q = array()) {
-        $query = new Query($path);
-
-        foreach($q as $key => $val) {
-            $query->where($key, $val);
+    public static function request($path, $conditions = array(), $conditionType = 'where') 
+    {
+        if (!session('router')) {
+            return;
         }
-        return $this->client->query($query)->read();
+
+        $router = Router::where('host', session('router'))->first();
+        self::connect($router);
+
+        $query = new Query($path);
+        foreach($conditions as $key => $val) {
+            if ($key == 'operations') {
+                $query->operations($val);
+            } else {
+                $query->{$conditionType}($key, $val);
+            }
+        }
+        return self::$client->query($query)->read();
     }
 }

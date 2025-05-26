@@ -1,4 +1,4 @@
-$(".btn-connect").on("click", function () {
+$("#content").on("click", ".btn-connect", function () {
     const btn = $(this);
     btn.html(
         '<span class="icon-[svg-spinners--90-ring-with-bg] size-4"></span>'
@@ -37,6 +37,7 @@ $("#content").on("click", ".btn-delete", function () {
         if (res.success) {
             $.get("/routers", function (data) {
                 $("#content").html($(data).find("#content").html());
+                showAlert("success", res.message, "tabler--circle-check");
             });
         }
     });

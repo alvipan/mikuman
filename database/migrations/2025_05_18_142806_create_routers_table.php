@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('routers', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
             $table->string('host')->unique();
             $table->string('user');
             $table->string('pass');
-            $table->string('currency');
-            $table->string('phone');
+            $table->string('name')->unique()->nullable();
+            $table->string('currency')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }
