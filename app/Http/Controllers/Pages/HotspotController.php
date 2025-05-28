@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Router;
 
-class DashboardController extends Controller
+class HotspotController extends Controller
 {
-    public function view() {
+    public function profile(Request $request) {
         $data = [
             'router' => Router::firstWhere('host', session('router')),
-            'menu' => 'dashboard',
-            'submenu' => '',
+            'menu' => 'hotspot',
+            'submenu' => 'profile'
         ];
-        return view('pages.dashboard', $data);
+        return view('pages.hotspot-profile', $data);
     }
 }

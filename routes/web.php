@@ -7,6 +7,8 @@ use App\Models\Router;
 use App\Helpers\Mikrotik;
 use App\Http\Controllers\GETController;
 use App\Http\Controllers\Pages\DashboardController;
+use App\Http\Controllers\Pages\HotspotController;
+use App\Http\Controllers\Pages\LogController;
 use App\Http\Controllers\Pages\RouterController;
 
 Route::match(['post','get'],'/', function (Request $request) 
@@ -20,8 +22,7 @@ Route::match(['post','get'],'/', function (Request $request)
 
     $validator = Validator::make($request->all(), [
         'host' => 'required|ip',
-        'user' => 'required',
-        'pass' => 'required',
+        'user' => 'required'
     ]);
 
     if ($validator->fails()) {
@@ -38,10 +39,8 @@ Route::match(['post','get'],'/', function (Request $request)
     $connected = Mikrotik::connect($router);
 
     if ($connected) {
-        session(['router' => $request->host]);
-        if ($request->has('save')) {
-            $router->save();
-        }
+        session(['router' => $router->host]);
+        $router->save();
         return [
             'success' => true,
             'message' => 'Connected successfull.'
@@ -71,9 +70,9 @@ Route::middleware('connected')->controller(GETController::class)->group(function
     Route::get('/interface', 'interfaces');
     Route::get('/get/interface/traffic', 'interfaceTraffic');
 
-    Route::get('/hotspot/profiles', 'hotspotProfiles');
-    Route::get('/hotspot/users', 'hotspotUsers');
-    Route::get('/hotspot/active', 'hotspotActive');
+    Route::get('/get/hotspot/profiles', 'hotspotProfiles');
+    Route::get('/get/hotspot/users', 'hotspotUsers');
+    Route::get('/get/hotspot/active', 'hotspotActive');
 
     Route::get('/ppp/profiles', 'pppProfiles');
     Route::get('/ppp/users', 'pppUsers');
@@ -91,4 +90,12 @@ Route::controller(RouterController::class)->group(function() {
 
 Route::middleware('connected')->controller(DashboardController::class)->group(function() {
     Route::get('/dashboard', 'view')->name('dashboard');
+});
+
+Route::middleware('connected')->controller(HotspotController::class)->group(function() {
+    Route::get('/hotspot/profile', 'profile')->name('hotspot-profile');
+});
+
+Route::middleware('connected')->controller(LogController::class)->group(function() {
+    Route::get('/logs', 'view')->name('logs');
 });

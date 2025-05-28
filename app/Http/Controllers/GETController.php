@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helpers\Mikrotik;
+use App\Models\Router;
 
 class GETController extends Controller
 {
@@ -33,8 +34,28 @@ class GETController extends Controller
     }
 
     public function hotspotProfiles(Request $request) {
-        $response = Mikrotik::request('/ip/hotspot/profile/print');
-        return $this->json($response);
+        $router = Router::firstWhere('host', session('router'));
+        $response = Mikrotik::request('/ip/hotspot/user/profile/print');
+        if (!$response) {
+            return $this->json(['data' => []]); 
+        }
+        
+        $profiles = array();
+        foreach ($response as $profile) {
+            preg_match('/\(\"(.*?)\"\)/', $profile['on-login'], $match);
+            $data = explode(',', $match[1],);
+            $item = [
+                'name' => $profile['name'],
+                'rate-limit' => $profile['rate-limit'],
+                'shared-users' => $profile['shared-users'].' Users',
+                'validity' => $data[3],
+                'price' => $router->currency.' '.number_format($data[2], 0),
+                'lock-users' => $data[6],
+                'lock-server' => $data[7],
+            ];
+            array_push($profiles, $item);
+        }
+        return $this->json(['data' => $profiles]);
     }
 
     public function hotspotUsers(Request $request) {
@@ -108,14 +129,21 @@ class GETController extends Controller
     }
 
     public function logs(Request $request) {
-        $response = Mikrotik::request('/log/print', $this->query($request));
-        return $this->json($response);
+        $result= [];
+        $topics = ['pppoe,ppp,info','hotspot,info,debug'];
+        $response = Mikrotik::request('/log/print');
+        foreach($response as $item) {
+            if(in_array($item['topics'], $topics)) {
+                array_push($result, $item);
+            }
+        }
+        return $this->json(['data' => array_reverse($result)]);
     }
 
     public function query(Request $request) {
         $conditions = [];
         foreach($request->query() as $key => $val) {
-            $conditions[$key] = $val;
+            '?'.$conditions[$key] = $val;
         }
         return $conditions;
     }

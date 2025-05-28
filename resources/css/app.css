@@ -2,14 +2,9 @@
 @plugin "flyonui";
 @plugin "@iconify/tailwind4";
 @import "flyonui/variants.css";
+@import "flyonui/src/vendor/datatables.css";
 @import "flyonui/src/vendor/apexcharts.css";
 @import "apexcharts/src/assets/apexcharts.css";
-
-@source "../node_modules/flyonui/flyonui.js";
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
 
 @plugin "flyonui/theme" {
     name: "dark";

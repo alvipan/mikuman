@@ -3,8 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Router;
-use RouterOS\Client;
-use RouterOS\Query;
+use App\Helpers\RouterosAPI;
 
 class Mikrotik
 {
@@ -13,35 +12,35 @@ class Mikrotik
     public static function connect(Router $router) 
     {
         try {
-            self::$client = new Client([
-                'host' => $router->host,
-                'user' => $router->user,
-                'pass' => $router->pass,
-                'port' => 8728,
-            ]);
+            self::$client = new RouterosAPI();
+            self::$client->debug = false;
+            self::$client->connect(
+                $router->host,
+                $router->user,
+                $router->pass
+            );
             return true;
         } catch (\Throwable $e) {
             return false;
         }
     }
 
-    public static function request($path, $conditions = array(), $conditionType = 'where') 
-    {
+    public static function request(
+        $path, 
+        $conditions = array()
+    ) {
         if (!session('router')) {
-            return;
+            return false;
         }
 
-        $router = Router::where('host', session('router'))->first();
+        $router = Router::firstWhere('host', session('router'));
         self::connect($router);
 
-        $query = new Query($path);
-        foreach($conditions as $key => $val) {
-            if ($key == 'operations') {
-                $query->operations($val);
-            } else {
-                $query->{$conditionType}($key, $val);
-            }
-        }
-        return self::$client->query($query)->read();
+        try {
+            $result = self::$client->comm($path, $conditions);
+            return $result;
+        } catch (\Throwable $e) {
+            return false;
+        } 
     }
 }

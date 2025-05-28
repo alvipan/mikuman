@@ -1,8 +1,8 @@
 @extends('app')
 
 @section('content')
-<div class="h-14 bg-base-200 flex items-center sticky px-6 -mx-6 -mt-6 top-16 z-30 mb-3">
-    <h2 class="font-bold">Dashboard</h2>
+<div class="flex items-center bg-base-200 mb-3 min-h-9">
+    <h2 class="font-bold me-auto">Dashboard</h2>
 </div>
 <div class="flex grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
 
@@ -57,19 +57,23 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <h4 class="text-base-content/60 text-sm font-semibold">Today</h4>
-                        <span class="min-md:text-2xl font-bold" id="income-today">Rp 0</span>
+                        <span class="min-md:text-2xl font-bold">{{$router->currency}}</span>
+                        <span class="min-md:text-2xl font-bold" id="income-today">0</span>
                     </div>
                     <div>
                         <h4 class="text-base-content/60 text-sm font-semibold">Yesterday</h4>
-                        <span class="min-md:text-2xl font-bold" id="income-yesterday">Rp 0</span>
+                        <span class="min-md:text-2xl font-bold">{{$router->currency}}</span>
+                        <span class="min-md:text-2xl font-bold" id="income-yesterday">0</span>
                     </div>
                     <div>
                         <h4 class="text-base-content/60 text-sm font-semibold">This Month</h4>
-                        <span class="min-md:text-2xl font-bold" id="income-this-month">Rp 0</span>
+                        <span class="min-md:text-2xl font-bold">{{$router->currency}}</span>
+                        <span class="min-md:text-2xl font-bold" id="income-this-month">0</span>
                     </div>
                     <div>
                         <h4 class="text-base-content/60 text-sm font-semibold">Last Month</h4>
-                        <span class="min-md:text-2xl font-bold" id="income-last-month">Rp 0</span>
+                        <span class="min-md:text-2xl font-bold">{{$router->currency}}</span>
+                        <span class="min-md:text-2xl font-bold" id="income-last-month">0</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +104,7 @@
                 <option>Interface</option>
             </select>
         </div>
-        <div id="traffic-chart" class="w-full"></div>
+        <div id="traffic-chart" class="w-full px-2"></div>
     </div>
 
     <div class="card">

@@ -10,6 +10,8 @@ export default defineConfig({
                 "resources/js/app.js",
                 "resources/js/login.js",
                 "resources/js/pages/dashboard.js",
+                "resources/js/pages/hotspot-profiles.js",
+                "resources/js/pages/logs.js",
             ],
             refresh: true,
         }),

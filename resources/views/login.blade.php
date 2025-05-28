@@ -14,11 +14,11 @@
                     Log-in
                 </button>
                 <button type="button" class="tab active-tab:tab-active w-full" id="tabs-saved-item" data-tab="#tabs-saved" aria-controls="tabs-saved" role="tab" aria-selected="false">
-                    Saved
+                    History
                 </button>
             </nav>
 
-            <div class="h-[320px] overflow-y-auto">
+            <div class="h-[280px] overflow-y-auto">
 
                 <div id="tabs-login" role="tabpanel" aria-labelledby="tabs-login-item">
                     <form action="" method="post" id="connect">
@@ -43,10 +43,6 @@
                                 <span class="icon-[tabler--lock] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
                                 <input type="password" placeholder="*******" class="grow" name="pass" id="pass" autocomplete="new-password"/>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-1 mb-3">
-                            <input type="checkbox" class="checkbox checkbox-primary" name="save" id="defaultCheckbox1" />
-                            <label class="label-text text-base" for="defaultCheckbox1">Save router</label>
                         </div>
                         <button type="submit" class="btn btn-submit btn-primary w-full">Connect</button>
                     </form>
@@ -75,33 +71,13 @@
                     <div class="md:col-span-3 text-center flex items-center justify-center h-[276px]">
                         <div class="text-center">
                             <span class="icon-[tabler--router-off] size-16 text-secondary"></span>
-                            <p class="mb-4">No routers saved yet.</p>
+                            <p class="mb-4">No data available.</p>
                         </div>
                     </div>
                     @endforelse
                 </div>
             </div>
 
-        </div>
-    </div>
-</div>
-
-<div id="confirm-action" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 modal-middle hidden" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-dialog-sm overlay-open:opacity-100 overlay-open:duration-300">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Dialog Title</h3>
-                <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#confirm-action">
-                    <span class="icon-[tabler--x] size-4"></span>
-                </button>
-            </div>
-            <div class="modal-body">
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-soft btn-secondary" data-overlay="#confirm-action">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
         </div>
     </div>
 </div>

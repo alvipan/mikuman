@@ -97,6 +97,7 @@ window.addEventListener("load", function () {
             },
         },
         yaxis: {
+            min: 10240,
             labels: {
                 align: "left",
                 minWidth: 0,
@@ -150,10 +151,10 @@ window.addEventListener("load", function () {
                 $("#voltage").html(res[0]["value"] + "V");
                 $("#temperature").html(res[1]["value"] + "&deg;C");
             }),
-            $.get("/hotspot/users?-default=", function (res) {
+            $.get("/get/hotspot/users", function (res) {
                 $("#hotspot-users").html(res.length);
             }),
-            $.get("/hotspot/active", function (res) {
+            $.get("/get/hotspot/active", function (res) {
                 $("#hotspot-active").html(res.length);
             }),
             $.get("/ppp/users", function (res) {
@@ -163,10 +164,10 @@ window.addEventListener("load", function () {
                 $("#ppp-active").html(res.length);
             }),
             $.get("/get/income?summary=", function (res) {
-                $("#income-today").html("Rp " + res.today);
-                $("#income-yesterday").html("Rp " + res.yesterday);
-                $("#income-this-month").html("Rp " + res["this-month"]);
-                $("#income-last-month").html("Rp " + res["last-month"]);
+                $("#income-today").html(res.today);
+                $("#income-yesterday").html(res.yesterday);
+                $("#income-this-month").html(res["this-month"]);
+                $("#income-last-month").html(res["last-month"]);
             }),
             $.get(
                 "/get/interface/traffic?interface=HOTSPOT&once=",
@@ -199,17 +200,17 @@ window.addEventListener("load", function () {
                     });
                 }
             ),
-            $.get("/get/logs?buffer=disk", function (res) {
+            $.get("/get/logs", function (res) {
                 $("#logs").html("");
                 const tr =
                     "<tr><td>time</td><td class='ps-0'>message</td></tr>";
-                $.each(res.reverse(), function (i) {
+                $.each(res.data.reverse(), function (i) {
                     $("#logs").append(
                         tr
-                            .replace("time", res[i]["time"])
+                            .replace("time", res.data[i]["time"])
                             .replace(
                                 "message",
-                                res[i]["message"].replace("->:", "")
+                                res.data[i]["message"].replace("->:", "")
                             )
                     );
                 });
