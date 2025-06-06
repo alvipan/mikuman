@@ -5,6 +5,7 @@ namespace App\View\Components\Modal;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use App\Helpers\Mikrotik;
 
 class CreateHotspotUserProfile extends Component
 {
@@ -21,6 +22,10 @@ class CreateHotspotUserProfile extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.create-hotspot-profile');
+        $data = [
+            'pools' => Mikrotik::request('/ip/pool/print'),
+            'queues' => Mikrotik::request("/queue/simple/print", array("?dynamic" => "false",))
+        ];
+        return view('components.modal.create-hotspot-profile', $data);
     }
 }

@@ -24,7 +24,23 @@ class GETController extends Controller
     }
 
     public function interfaces(Request $request) {
-        $response = Mikrotik::request('/interface/print',['-dynamic'=>'']);
+        $arr = array();
+        $response = Mikrotik::request('/interface/print');
+        foreach($response as $item) {
+            if (!isset($item['dynamic'])) {
+                array_push($arr, $item);
+            }
+        }
+        return $this->json($arr);
+    }
+
+    public function IPPool(Request $request) {
+        $response = Mikrotik::request('/ip/pool/print');
+        return $this->json($response);
+    }
+
+    public function queue(Request $request) {
+        $response = Mikrotik::request("/queue/simple/print", array("?dynamic" => "false",));
         return $this->json($response);
     }
 
@@ -45,11 +61,16 @@ class GETController extends Controller
             preg_match('/\(\"(.*?)\"\)/', $profile['on-login'], $match);
             $data = explode(',', $match[1],);
             $item = [
+                'id' => $profile['.id'],
                 'name' => $profile['name'],
-                'rate-limit' => $profile['rate-limit'],
-                'shared-users' => $profile['shared-users'].' Users',
+                'ip-pool' => isset($profile['address-pool']) ? $profile['address-pool'] : 'none' ,
+                'rate-limit' => isset($profile['rate-limit']) ? $profile['rate-limit'] : '',
+                'shared-users' => $profile['shared-users'],
+                'parent-queue' => $profile['parent-queue'],
+                'expire-mode' => $data[1],
+                'price' => $data[2],
                 'validity' => $data[3],
-                'price' => $router->currency.' '.number_format($data[2], 0),
+                'sprice' => $data[4],
                 'lock-users' => $data[6],
                 'lock-server' => $data[7],
             ];
@@ -59,13 +80,13 @@ class GETController extends Controller
     }
 
     public function hotspotUsers(Request $request) {
-        $response = Mikrotik::request('/ip/hotspot/user/print', $this->query($request));
-        return $this->json($response);
+        $response = Mikrotik::request('/ip/hotspot/user/print');
+        return $this->json(['data' => $response]);
     }
 
     public function hotspotActive(Request $request) {
         $response = Mikrotik::request('/ip/hotspot/active/print');
-        return $this->json($response);
+        return $this->json(['data' => $response]);
     }
 
     public function pppProfiles(Request $request) {
@@ -83,7 +104,7 @@ class GETController extends Controller
         return $this->json($response);
     }
 
-    public function income(Request $request) {
+    public function report(Request $request) {
         $response = Mikrotik::request('/sys/script/print');
         if ($request->has('summary')) {
             $data = [
@@ -125,19 +146,34 @@ class GETController extends Controller
                 'last-month' => number_format($data['last-month'], 0)
             ];
         }
-        return $this->json($response);
+        $result = array();
+        foreach($response as $x) {
+            $data = explode('-|-', $x['name']);
+            $item = [
+                'date' => ucfirst($data[0]),
+                'time' => $data[1],
+                'user' => $data[2],
+                'price' => $data[3],
+                'ip-address' => $data[4],
+                'mac-address' => $data[5],
+                'profile' => $data[7],
+                'comment' => $data[8],
+            ];
+            array_push($result, $item);
+        }
+        return $this->json(['data' => array_reverse($result)]);
     }
 
     public function logs(Request $request) {
-        $result= [];
-        $topics = ['pppoe,ppp,info','hotspot,info,debug'];
-        $response = Mikrotik::request('/log/print');
-        foreach($response as $item) {
-            if(in_array($item['topics'], $topics)) {
-                array_push($result, $item);
+        $arr = array();
+        $response = Mikrotik::request('/log/print', ['?topics' => 'hotspot,info,debug']);
+        foreach ($response as $item) {
+            if (str_contains($item['message'], '->')) {
+                array_push($arr, $item);
             }
         }
-        return $this->json(['data' => array_reverse($result)]);
+
+        return $this->json(['data' => array_reverse($arr)]);
     }
 
     public function query(Request $request) {

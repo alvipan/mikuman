@@ -12,19 +12,16 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @yield('js')
     </head>
-    <body class="relative flex min-h-screen flex-col antialiased">
+    <body class="relative flex min-h-screen flex-col antialiased overflow-hidden">
         <main class="flex-1 bg-base-100">
             @if (!session('router'))
             <div class="container mx-auto max-w-screen-2xl">
                 <div class="bg-base-200 min-h-screen" id="content">
             @else
             @include('includes.header')
-            <div class="container mx-auto max-w-screen-2xl grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] gap-4">
+            <div class="container mx-auto max-w-screen-2xl grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)]">
                 @include('includes.sidebar')
-                <div class="min-h-[calc(100vh-4rem)] bg-base-200 p-6" id="content">
-                    <div class="bg-base-100 -mx-6 -mt-6 sticky top-16 z-50">
-                        <div class="md:rounded-tl-2xl 2xl:rounded-t-2xl bg-base-200 h-4"></div>
-                    </div>
+                <div class="flex flex-col h-[calc(100vh-4rem)] bg-base-200 md:rounded-tl-2xl 2xl:rounded-t-2xl" id="content">
             @endif
                     @yield('content')
                     <div id="alert" class="max-md:w-full fixed bottom-0 right-0 p-6"></div>

@@ -4,6 +4,8 @@
 @import "flyonui/variants.css";
 @import "flyonui/src/vendor/datatables.css";
 @import "flyonui/src/vendor/apexcharts.css";
+@import "flatpickr/dist/flatpickr.css";
+@import "flyonui/src/vendor/flatpickr.css";
 @import "apexcharts/src/assets/apexcharts.css";
 
 @plugin "flyonui/theme" {

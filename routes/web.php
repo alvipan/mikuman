@@ -8,6 +8,7 @@ use App\Helpers\Mikrotik;
 use App\Http\Controllers\GETController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\HotspotController;
+use App\Http\Controllers\Pages\ReportController;
 use App\Http\Controllers\Pages\LogController;
 use App\Http\Controllers\Pages\RouterController;
 
@@ -53,6 +54,11 @@ Route::match(['post','get'],'/', function (Request $request)
     }
 })->middleware('disconnected')->name('login');
 
+Route::get('/test', function() {
+    $content = Storage::get('/script/exp.txt');
+    return $content;
+});
+
 Route::get('/logout', function(Request $request) 
 {
     Auth::logout();
@@ -67,8 +73,11 @@ Route::middleware('connected')->controller(GETController::class)->group(function
     Route::get('/system/resources', 'systemResources');
     Route::get('/system/health', 'systemHealth');
 
-    Route::get('/interface', 'interfaces');
+    Route::get('/get/interface', 'interfaces');
     Route::get('/get/interface/traffic', 'interfaceTraffic');
+
+    Route::get('/get/ip/pool', 'IPPool');
+    Route::get('/get/queue', 'queue');
 
     Route::get('/get/hotspot/profiles', 'hotspotProfiles');
     Route::get('/get/hotspot/users', 'hotspotUsers');
@@ -78,7 +87,7 @@ Route::middleware('connected')->controller(GETController::class)->group(function
     Route::get('/ppp/users', 'pppUsers');
     Route::get('/ppp/active', 'pppActive');
 
-    Route::get('/get/income', 'income');
+    Route::get('/get/report', 'report');
 
     Route::get('/get/logs', 'logs');
 });
@@ -93,7 +102,15 @@ Route::middleware('connected')->controller(DashboardController::class)->group(fu
 });
 
 Route::middleware('connected')->controller(HotspotController::class)->group(function() {
-    Route::get('/hotspot/profile', 'profile')->name('hotspot-profile');
+    Route::get('/hotspot/profiles', 'profiles')->name('hotspot-profiles');
+    Route::get('/hotspot/users', 'users')->name('hotspot-users');
+    Route::get('/hotspot/active', 'active')->name('hotspot-active');
+    Route::post('/hotspot/profiles/submit', 'submitUserProfile');
+    Route::post('/hotspot/profiles/remove', 'removeUserProfile');
+});
+
+Route::middleware('connected')->controller(ReportController::class)->group(function() {
+    Route::get('/report', 'view')->name('report');
 });
 
 Route::middleware('connected')->controller(LogController::class)->group(function() {

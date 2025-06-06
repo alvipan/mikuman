@@ -27,3 +27,18 @@ window.formatBytes = function (bytes, decimals = 0) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
+
+window.formatTimes = function (x) {
+    let w = x.substring(0, x.indexOf("w")),
+        d = x.substring(w > 0 ? x.indexOf("w") + 1 : 0, x.indexOf("d")),
+        h = x.substring(d > 0 ? x.indexOf("d") + 1 : 0, x.indexOf("h")),
+        m = x.substring(h > 0 ? x.indexOf("h") + 1 : 0, x.indexOf("m")),
+        s = x.substring(m > 0 ? x.indexOf("m") + 1 : 0, x.indexOf("s"));
+
+    d = w * 7 + parseInt(d);
+    h = h > 0 ? (h < 10 ? "0" + h : h) : "00";
+    m = m > 0 ? (m < 10 ? "0" + m : m) : "00";
+    s = s > 0 ? (s < 10 ? "0" + s : s) : "00";
+
+    return (d > 0 ? d + "d " : "") + h + ":" + m + ":" + s;
+};

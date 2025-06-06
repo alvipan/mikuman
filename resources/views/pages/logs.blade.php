@@ -1,20 +1,20 @@
 @extends('app')
 
 @section('content')
-<div id="logs-table">
-    <div class="flex items-center gap-2 bg-base-200 min-h-9 mb-3">
+<div id="logs-table" class="flex flex-col h-[calc(100vh-4rem)]">
+    <div class="flex items-center gap-2 px-4 md:px-6 py-4">
         <h2 class="font-bold me-auto">Log</h2>
+        <button class="btn btn-sm btn-square btn-reload btn-soft btn-primary">
+            <span class="icon-[tabler--reload] size-4"></span>
+        </button>
         <div class="input input-sm max-w-50">
             <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
             <label class="sr-only" for="table-input-search"></label>
             <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
-        <button class="btn btn-sm btn-square btn-reload btn-outline btn-primary">
-            <span class="icon-[tabler--reload] size-4"></span>
-        </button>
     </div>
-    <div class="card">
-        <div class="bg-base-100 flex flex-col rounded-md shadow-base-300/20 shadow-sm">
+    <div class="flex-1 px-4 md:px-6 pb-4 md:pb-6 overflow-auto">
+        <div class="card">
             <div class="overflow-x-auto">
                 <div class="inline-block min-w-full align-middle">
                     <div class="overflow-hidden">
@@ -29,7 +29,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                    
+                        
                             </tbody>
                         </table>
                     </div>

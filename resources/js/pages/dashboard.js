@@ -152,10 +152,10 @@ window.addEventListener("load", function () {
                 $("#temperature").html(res[1]["value"] + "&deg;C");
             }),
             $.get("/get/hotspot/users", function (res) {
-                $("#hotspot-users").html(res.length);
+                $("#hotspot-users").html(res.data.length);
             }),
             $.get("/get/hotspot/active", function (res) {
-                $("#hotspot-active").html(res.length);
+                $("#hotspot-active").html(res.data.length);
             }),
             $.get("/ppp/users", function (res) {
                 $("#ppp-users").html(res.length);
@@ -163,7 +163,7 @@ window.addEventListener("load", function () {
             $.get("/ppp/active", function (res) {
                 $("#ppp-active").html(res.length);
             }),
-            $.get("/get/income?summary=", function (res) {
+            $.get("/get/report?summary=", function (res) {
                 $("#income-today").html(res.today);
                 $("#income-yesterday").html(res.yesterday);
                 $("#income-this-month").html(res["this-month"]);
@@ -204,7 +204,10 @@ window.addEventListener("load", function () {
                 $("#logs").html("");
                 const tr =
                     "<tr><td>time</td><td class='ps-0'>message</td></tr>";
-                $.each(res.data.reverse(), function (i) {
+                $.each(res.data, function (i) {
+                    if (!(i < 10)) {
+                        return;
+                    }
                     $("#logs").append(
                         tr
                             .replace("time", res.data[i]["time"])
