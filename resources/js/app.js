@@ -8,12 +8,11 @@ $.ajaxSetup({
     },
 });
 
-window.showAlert = function (t, m, icon) {
-    const e =
-        '<div class="alert alert-type py-2 flex items-start gap-2">icon <span>message<span></div>';
-    const i = '<span class="icon-[' + icon + '] size-6"></span>';
-    const html = e.replace("type", t).replace("icon", i).replace("message", m);
-    $("#alert").html($(html).hide().fadeIn(1000).delay(3000).fadeOut(1000));
+window.showAlert = function (t, m, i) {
+    const alert = $("#alert").find(".alert-" + t);
+    alert.find(".icon").html('<span class="icon-[' + i + '] size-6"></span>');
+    alert.find(".message").html(m);
+    alert.fadeIn(1000).delay(3000).fadeOut(1000);
 };
 
 window.formatBytes = function (bytes, decimals = 0) {

@@ -10,7 +10,9 @@ use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\HotspotController;
 use App\Http\Controllers\Pages\ReportController;
 use App\Http\Controllers\Pages\LogController;
+use App\Http\Controllers\Pages\SettingController;
 use App\Http\Controllers\Pages\RouterController;
+use Illuminate\Support\Facades\Crypt;
 
 Route::match(['post','get'],'/', function (Request $request) 
 {
@@ -55,8 +57,12 @@ Route::match(['post','get'],'/', function (Request $request)
 })->middleware('disconnected')->name('login');
 
 Route::get('/test', function() {
-    $content = Storage::get('/script/exp.txt');
-    return $content;
+    $char = '2346789ABCDEFGHJKLMNPQRTUVWXYZ';
+    $rand = '';
+    for ($i = 0; $i < 5; $i++) {
+        $rand .= $char[rand(0, strlen($char) -1)];
+    }
+    return $rand;
 });
 
 Route::get('/logout', function(Request $request) 
@@ -103,10 +109,14 @@ Route::middleware('connected')->controller(DashboardController::class)->group(fu
 
 Route::middleware('connected')->controller(HotspotController::class)->group(function() {
     Route::get('/hotspot/profiles', 'profiles')->name('hotspot-profiles');
-    Route::get('/hotspot/users', 'users')->name('hotspot-users');
-    Route::get('/hotspot/active', 'active')->name('hotspot-active');
     Route::post('/hotspot/profiles/submit', 'submitUserProfile');
     Route::post('/hotspot/profiles/remove', 'removeUserProfile');
+    Route::get('/hotspot/users', 'users')->name('hotspot-users');
+    Route::post('/hotspot/users/generate', 'generateUsers');
+    Route::post('/hotspot/users/edit', 'editUser');
+    Route::post('/hotspot/users/remove', 'removeUser');
+    Route::get('/hotspot/users/print', 'print');
+    Route::get('/hotspot/active', 'active')->name('hotspot-active');
 });
 
 Route::middleware('connected')->controller(ReportController::class)->group(function() {
@@ -115,4 +125,8 @@ Route::middleware('connected')->controller(ReportController::class)->group(funct
 
 Route::middleware('connected')->controller(LogController::class)->group(function() {
     Route::get('/logs', 'view')->name('logs');
+});
+
+Route::middleware('connected')->controller(SettingController::class)->group(function() {
+    Route::get('/settings', 'view')->name('settings');
 });

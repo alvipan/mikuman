@@ -196,8 +196,8 @@
                     Logs
                 </a>
             </li>
-            <li>
-                <a @class([
+            <li aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#setting-form-modal">
+                <span @class([
                         'flex',
                         'items-center',
                         'gap-3',
@@ -205,10 +205,10 @@
                         'text-base-content/70',
                         'hover:text-base-content' => $menu != 'settings',
                         'text-primary' => $menu == 'settings'
-                    ]) href="/settings">
+                    ])>
                     <span class="icon-[tabler--settings] size-5"></span>
                     Settings
-                </a>
+                </span>
             </li>
             <li>
                 <a @class([

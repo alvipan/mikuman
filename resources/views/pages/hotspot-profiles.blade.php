@@ -68,7 +68,8 @@
             </div>
     </div>
 </div>
-<x-modal.create-hotspot-user-profile />
+<x-modal.hotspot-user-profile-form />
+<x-modal.confirm />
 @endsection
 
 @section('js')

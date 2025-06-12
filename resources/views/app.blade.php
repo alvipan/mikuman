@@ -24,10 +24,22 @@
                 <div class="flex flex-col h-[calc(100vh-4rem)] bg-base-200 md:rounded-tl-2xl 2xl:rounded-t-2xl" id="content">
             @endif
                     @yield('content')
-                    <div id="alert" class="max-md:w-full fixed bottom-0 right-0 p-6"></div>
+                    <div id="alert" class="max-md:w-full fixed bottom-0 right-0 p-6">
+                        <div class="alert alert-success py-2 flex items-start gap-2 hidden">
+                            <span class="icon"></span>
+                            <span class="message"></span>
+                        </div>
+                        <div class="alert alert-error py-2 flex items-start gap-2 hidden">
+                            <span class="icon"></span>
+                            <span class="message"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
         @yield('modal')
+        @if (session('router'))
+        <x-modal.setting-form />
+        @endif
     </body>
 </html>

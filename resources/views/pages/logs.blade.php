@@ -60,7 +60,6 @@
         </div>
     </div>
 </div>
-<x-modal.create-hotspot-user-profile />
 @endsection
 
 @section('js')

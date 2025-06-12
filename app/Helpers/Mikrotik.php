@@ -25,10 +25,8 @@ class Mikrotik
         }
     }
 
-    public static function request(
-        $path, 
-        $conditions = array()
-    ) {
+    public static function request($path, $conditions = array())
+    {
         if (!session('router')) {
             return false;
         }

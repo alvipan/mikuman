@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use App\Helpers\Mikrotik;
 
-class CreateHotspotUserProfile extends Component
+class HotspotUserProfileForm extends Component
 {
     /**
      * Create a new component instance.
@@ -26,6 +26,6 @@ class CreateHotspotUserProfile extends Component
             'pools' => Mikrotik::request('/ip/pool/print'),
             'queues' => Mikrotik::request("/queue/simple/print", array("?dynamic" => "false",))
         ];
-        return view('components.modal.create-hotspot-profile', $data);
+        return view('components.modal.hotspot-user-profile-form', $data);
     }
 }

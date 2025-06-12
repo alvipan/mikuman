@@ -1,19 +1,18 @@
 <?php
 
-namespace App\View\Components\Form;
+namespace App\View\Components\Modal;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use App\Models\Router;
 
-class Input extends Component
+class SettingForm extends Component
 {
     /**
      * Create a new component instance.
      */
-    public function __construct(
-        public string $label
-    )
+    public function __construct()
     {
         //
     }
@@ -23,6 +22,9 @@ class Input extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.form.input');
+        $data = [
+            'router' => Router::firstWhere('host', session('router'))
+        ];
+        return view('components.modal.setting-form', $data);
     }
 }

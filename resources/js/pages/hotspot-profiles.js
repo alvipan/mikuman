@@ -29,7 +29,7 @@ window.addEventListener("load", function () {
         ],
     });
 
-    $("#content").on("submit", "#form-hotspot-profile", function (e) {
+    $("#content").on("submit", "#hotspot-user-profile-form", function (e) {
         e.preventDefault();
         const form = $(this);
         const data = form.serializeArray();
@@ -44,28 +44,28 @@ window.addEventListener("load", function () {
             if (res.success) {
                 showAlert("success", res.message, "tabler--circle-check");
                 profileTable.dataTable.ajax.reload();
-                HSOverlay.close("#form-hotspot-profile-modal");
+                HSOverlay.close("#hotspot-user-profile-form-modal");
                 form[0].reset();
             } else {
-                showAlert("error", res.message, "tabler--alert-circle");
+                showAlert("error", res.message, "line-md--alert-circle");
             }
             btn.attr("disabled", false).html("Save");
         });
     });
 
     $("#content").on("click", ".btn-add", function () {
-        HSOverlay.open("#form-hotspot-profile-modal");
+        HSOverlay.open("#hotspot-user-profile-form-modal");
         HSTabs.open(document.querySelector("#tab-general"));
-        const form = $("#form-hotspot-profile");
+        const form = $("#hotspot-user-profile-form");
         form[0].reset();
         form.find('select[name="expmode"]').trigger("change");
     });
 
     $("#content").on("click", ".btn-edit", function () {
-        HSOverlay.open("#form-hotspot-profile-modal");
+        HSOverlay.open("#hotspot-user-profile-form-modal");
         HSTabs.open(document.querySelector("#tab-general"));
         const row = $(this).closest("tr");
-        const form = $("#form-hotspot-profile");
+        const form = $("#hotspot-user-profile-form");
         const data = profileTable.dataTable.row(row).data();
 
         form[0].reset();
@@ -93,12 +93,21 @@ window.addEventListener("load", function () {
     });
 
     $("#content").on("click", ".btn-remove", function () {
+        HSOverlay.open("#confirm-modal");
         const row = $(this).closest("tr");
         const data = profileTable.dataTable.row(row).data();
-        const btn = $(this);
-        const html = btn.html();
+        const modal = $("#confirm-modal");
+        const title = modal.find(".modal-title");
+        const body = modal.find(".modal-body");
+        title.html("Confirmation");
+        body.html(
+            "Are you sure you want to delete the [" +
+                data.name +
+                "] hotspot user profile?"
+        );
 
-        if (confirm("Are you sure to remove user profile?")) {
+        modal.on("click", ".btn-confirm", function () {
+            const btn = $(this);
             btn.html(
                 '<span class="icon-[svg-spinners--90-ring-with-bg] size-4"></span>'
             );
@@ -108,9 +117,10 @@ window.addEventListener("load", function () {
                     profileTable.dataTable.ajax.reload();
                 } else {
                     showAlert("error", res.message, "tabler--alert");
-                    btn.html(html);
                 }
+                btn.html("Confirm");
+                HSOverlay.close("#confirm-modal");
             });
-        }
+        });
     });
 });

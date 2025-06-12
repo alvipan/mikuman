@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -18,14 +19,6 @@ class HotspotController extends Controller
             'submenu' => 'hotspot-profiles'
         ];
         return view('pages.hotspot-profiles', $data);
-    }
-
-    public function users(Request $request) {
-        $data = [
-            'menu' => 'hotspot',
-            'submenu' => 'hotspot-users'
-        ];
-        return view('pages.hotspot-users', $data);
     }
 
     public function active(Request $request) {
@@ -62,7 +55,7 @@ class HotspotController extends Controller
         $price          = $request->price;
         $sprice         = $request->sprice;
         $expmode        = $request->expmode;
-        $validity       = '1d';
+        $validity       = $request->validity;
         $ulock          = $request->ulock;
         $slock          = $request->slock;
 
@@ -139,5 +132,150 @@ class HotspotController extends Controller
             'success' => empty($response),
             'message' => empty($response) ? 'User profile has been remove' : $response['!trap'][0]['message']
         ];
+    }
+
+    public function users(Request $request) {
+        $data = [
+            'menu' => 'hotspot',
+            'submenu' => 'hotspot-users'
+        ];
+        return view('pages.hotspot-users', $data);
+    }
+
+    public function generateUsers(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'quantity' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ];
+        }
+
+        // Get fields submitted
+        $quantity       = $request->quantity;
+        $server         = $request->get('server');
+        $credential     = $request->credential;
+        $length         = $request->length;
+        $profile        = $request->profile;
+        $comment        = !empty($request->comment) 
+            ? 'vc-'.substr(mt_rand(), 0, 6).'-'.$request->comment 
+            : 'vc-'.substr(mt_rand(), 0, 6);
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $name = $this->randString($length);
+            $pass = $credential == 'unp' 
+                ? $this->randString($length)
+                : $name;
+
+            $user = array(
+                'server'    => $server,
+                'name'      => strtoupper($name),
+                'password'  => strtoupper($pass),
+                'profile'   => $profile,
+                'comment'   => $comment
+            );
+
+            $response = Mikrotik::request('/ip/hotspot/user/add', $user);
+            if (!empty($response['!trap'][0]['message'])) {
+                return [
+                    'success' => false,
+                    'message' => $response['!trap'][0]['message']
+                ];
+            }
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Hotspot users has been generate'
+        ];
+    }
+
+    public function editUser(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ];
+        }
+
+        $response = Mikrotik::request('/ip/hotspot/user/set', [
+            '.id'       => $request->id,
+            'server'    => !empty($request->get('server')) ? $request->get('server') : 'all',
+            'name'      => $request->name,
+            'password'  => $request->password,
+            'profile'   => $request->profile,
+            'comment'   => $request->comment
+        ]);
+
+        if (!empty($response['!trap'][0]['message'])) {
+            return [
+                'success' => false,
+                'message' => $response['!trap'][0]['message']
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Hotspot users has been updated'
+        ];
+    }
+
+    public function removeUser(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => 'Invalid request.',
+            ];
+        }
+
+        $response = Mikrotik::request('/ip/hotspot/user/remove', array('.id' => $request->id,));
+
+        return [
+            'success' => empty($response),
+            'message' => empty($response) ? 'User has been remove' : $response['!trap'][0]['message']
+        ];
+    }
+
+    public function print(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ];
+        }
+        $users = Mikrotik::request('/ip/hotspot/user/print', ['?comment' => $request->comment]);
+        $profile = Mikrotik::request('/ip/hotspot/user/profile/print', ['?name' => $users[0]['profile']]);
+
+        $data = [
+            'users' => $users,
+            'profile' => $profile,
+            'router' => Router::firstWhere('host', session('router')),
+            'color' => $request->color
+        ];
+        return view('pages.hotspot-print', $data);
+    }
+
+    private function randString($length) {
+        $char = '2346789ABCDEFGHJKLMNPQRTUVWXYZ';
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $char[rand(0, strlen($char) -1)];
+        }
+        return $result;
     }
 }

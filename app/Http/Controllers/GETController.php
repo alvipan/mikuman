@@ -81,6 +81,10 @@ class GETController extends Controller
 
     public function hotspotUsers(Request $request) {
         $response = Mikrotik::request('/ip/hotspot/user/print');
+        foreach ($response as $i => $v) {
+            $response[$i]['id'] = $response[$i]['.id'];
+            unset($response[$i]['.id']);
+        }
         return $this->json(['data' => $response]);
     }
 

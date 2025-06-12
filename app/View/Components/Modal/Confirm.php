@@ -1,19 +1,17 @@
 <?php
 
-namespace App\View\Components\Form;
+namespace App\View\Components\Modal;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Input extends Component
+class Confirm extends Component
 {
     /**
      * Create a new component instance.
      */
-    public function __construct(
-        public string $label
-    )
+    public function __construct()
     {
         //
     }
@@ -23,6 +21,6 @@ class Input extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.form.input');
+        return view('components.modal.confirm');
     }
 }

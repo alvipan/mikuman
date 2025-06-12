@@ -6,15 +6,7 @@
         <h2 class="font-bold me-auto">Hotspot Users</h2>
         <div class="flex gap-2 justify-end">
             <div class="tooltip [--placement:bottom]">
-                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#profile-form-modal">
-                    <span class="icon-[tabler--user-plus] size-5"></span>
-                </button>
-                <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                    <span class="tooltip-body tooltip-primary">Create user</span>
-                </span>
-            </div>
-            <div class="tooltip [--placement:bottom]">
-                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#profile-form-modal">
+                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#hotspot-user-form-modal">
                     <span class="icon-[tabler--users-plus] size-5"></span>
                 </button>
                 <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
@@ -22,7 +14,7 @@
                 </span>
             </div>
             <div class="tooltip [--placement:bottom]">
-                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#profile-form-modal">
+                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#hotspot-user-print-form-modal">
                     <span class="icon-[tabler--printer] size-5"></span>
                 </button>
                 <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
@@ -51,6 +43,7 @@
                                         <th>Bytes In</th>
                                         <th>Bytes Out</th>
                                         <th>Comment</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -85,7 +78,10 @@
             </div>
     </div>
 </div>
-<x-modal.create-hotspot-user-profile />
+<x-modal.confirm />
+<x-modal.hotspot-user-form />
+<x-modal.hotspot-user-edit-form />
+<x-modal.hotspot-user-print-form />
 @endsection
 
 @section('js')
