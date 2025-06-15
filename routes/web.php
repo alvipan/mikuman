@@ -8,11 +8,21 @@ use App\Helpers\Mikrotik;
 use App\Http\Controllers\GETController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\HotspotController;
+use App\Http\Controllers\Pages\PPPoEController;
 use App\Http\Controllers\Pages\ReportController;
 use App\Http\Controllers\Pages\LogController;
 use App\Http\Controllers\Pages\SettingController;
 use App\Http\Controllers\Pages\RouterController;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
+
+Route::get('/test', function() {
+    $char = '2346789ABCDEFGHJKLMNPQRTUVWXYZ';
+    $rand = '';
+    for ($i = 0; $i < 5; $i++) {
+        $rand .= $char[rand(0, strlen($char) -1)];
+    }
+    return File::get(public_path('assets/script/exp'));
+});
 
 Route::match(['post','get'],'/', function (Request $request) 
 {
@@ -55,15 +65,6 @@ Route::match(['post','get'],'/', function (Request $request)
         ];
     }
 })->middleware('disconnected')->name('login');
-
-Route::get('/test', function() {
-    $char = '2346789ABCDEFGHJKLMNPQRTUVWXYZ';
-    $rand = '';
-    for ($i = 0; $i < 5; $i++) {
-        $rand .= $char[rand(0, strlen($char) -1)];
-    }
-    return $rand;
-});
 
 Route::get('/logout', function(Request $request) 
 {
@@ -117,6 +118,10 @@ Route::middleware('connected')->controller(HotspotController::class)->group(func
     Route::post('/hotspot/users/remove', 'removeUser');
     Route::get('/hotspot/users/print', 'print');
     Route::get('/hotspot/active', 'active')->name('hotspot-active');
+});
+
+Route::middleware('connected')->controller(PPPoEController::class)->group(function() {
+    Route::get('/pppoe/{page}', 'view');
 });
 
 Route::middleware('connected')->controller(ReportController::class)->group(function() {

@@ -1,0 +1,5 @@
+[
+    :local mac $"mac-address";
+    :local srv [/ip hotspot host get [find where mac-address="$mac"] server];
+    /ip hotspot user set server=$srv [find where name=$user]
+];

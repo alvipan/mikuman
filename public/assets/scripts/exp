@@ -1,0 +1,39 @@
+:put (",{{expmode}},{{price}},{{validity}},{{sprice}},,{{ulock}},{{slock}},");
+:local mode "{{mode}}";
+{
+    :local date [ /system clock get date ];
+    :local year [ :pick $date 7 11 ];
+    :local month [ :pick $date 0 3 ];
+    :local comment [ /ip hotspot user get [/ip hotspot user find where name="$user"] comment];
+    :local ucode [:pic $comment 0 2];
+
+    :if ($ucode = "vc" or $ucode = "up" or $comment = "") do={ 
+        /sys sch add name="$user" disable=no start-date=$date interval="{{validity}}";
+        :delay 2s;
+        :local exp [ /sys sch get [ /sys sch find where name="$user" ] next-run];
+        :local getxp [len $exp];
+        
+        :if ($getxp = 15) do={
+            :local d [:pic $exp 0 6];
+            :local t [:pic $exp 7 16];
+            :local s ("/");
+            :local exp ("$d$s$year $t");
+            
+            /ip hotspot user set comment="$exp $mode" [find where name="$user"];
+        };
+        
+        :if ($getxp = 8) do={ 
+            /ip hotspot user set comment="$date $exp $mode" [find where name="$user"];
+        };
+        
+        :if ($getxp > 15) do={ 
+            /ip hotspot user set comment="$exp $mode" [find where name="$user"];
+        };
+        
+        /sys sch remove [find where name="$user"];
+
+        {{recordscript}}
+        {{ulockscript}}
+        {{slockscript}}
+    }
+}

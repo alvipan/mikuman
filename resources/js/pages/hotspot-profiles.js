@@ -4,15 +4,24 @@ window.addEventListener("load", function () {
         pagingOptions: {
             pageBtnClasses: "btn btn-text btn-square btn-sm",
         },
+        rowSelectingOptions: {
+            selectAllSelector: "#table-checkbox-all"
+        },
         ajax: "/get/hotspot/profiles",
         columns: [
+            {
+                data: "id", 
+                render: function() {
+                    return ('<input type="checkbox" class="checkbox checkbox-xs" data-datatable-row-selecting-individual="" />');
+                } 
+            },
             { data: "name" },
             { data: "rate-limit", default: "" },
             { data: "validity", default: "" },
-            { data: "price" },
-            { data: "shared-users" },
-            { data: "lock-users" },
-            { data: "lock-server" },
+            { data: "price", default: 0 },
+            { data: "shared-users", default: 0 },
+            { data: "lock-users", default: 'Disable' },
+            { data: "lock-server", default: 'Disable' },
             {
                 data: "id",
                 render: function (data) {
@@ -92,26 +101,61 @@ window.addEventListener("load", function () {
             : $('input[name="validity"]').attr("disabled", true);
     });
 
+    profileTable.dataTable.on('change', 'thead input[type="checkbox"]', function() {
+        $('tbody tr input[type="checkbox"]').trigger('change');
+    });
+
+    profileTable.dataTable.on('change', 'tbody input[type="checkbox"]', function() {
+        const row = $(this).closest('tr');
+        if ($(this).is(':checked')) {
+            row.addClass('selected');
+        } else {
+            row.removeClass('selected');
+        }
+        $('#btn-remove').attr('disabled', (profileTable.dataTable.rows('.selected').data().length <= 0))
+    });
+
+    $("#content").on("click", "#btn-remove", function() {
+        const data = profileTable.dataTable.rows('.selected').data();
+        removeProfile(data);
+    });
+
     $("#content").on("click", ".btn-remove", function () {
-        HSOverlay.open("#confirm-modal");
+        const data = [];
         const row = $(this).closest("tr");
-        const data = profileTable.dataTable.row(row).data();
+        data.push(profileTable.dataTable.row(row).data());
+        removeProfile(data);
+    });
+
+    function removeProfile(data) {
+        HSOverlay.open("#confirm-modal");
+
+        const ids = [];
         const modal = $("#confirm-modal");
-        const title = modal.find(".modal-title");
+        const title = modal.find(".title");
         const body = modal.find(".modal-body");
+
         title.html("Confirmation");
         body.html(
-            "Are you sure you want to delete the [" +
-                data.name +
-                "] hotspot user profile?"
+            "<p>The user profile below will be deleted.</p>" +
+            "<profiles></profiles>"
         );
+
+        $.each(data, function(i, profile) {
+            ids.push(profile.id);
+            body.find('profiles').append(
+                '<span class="badge badge-soft badge-error badge-sm">'+
+                profile['name']+
+                '</span>'
+            );
+        });
 
         modal.on("click", ".btn-confirm", function () {
             const btn = $(this);
             btn.html(
                 '<span class="icon-[svg-spinners--90-ring-with-bg] size-4"></span>'
             );
-            $.post("/hotspot/profiles/remove", { id: data.id }, function (res) {
+            $.post("/hotspot/profiles/remove", { id: ids }, function (res) {
                 if (res.success) {
                     showAlert("success", res.message, "tabler--circle-check");
                     profileTable.dataTable.ajax.reload();
@@ -120,7 +164,8 @@ window.addEventListener("load", function () {
                 }
                 btn.html("Confirm");
                 HSOverlay.close("#confirm-modal");
+                $("#btn-remove").attr("disabled", true);
             });
         });
-    });
+    }
 });

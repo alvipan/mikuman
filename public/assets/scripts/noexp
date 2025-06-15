@@ -1,0 +1,4 @@
+:put (",,{{price}},,{{sprice}},noexp,{{ulock}},{{slock}},");
+
+{{ulockscript}}
+{{slockscript}}

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-sm overlay-open:opacity-100 overlay-open:duration-300">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="text-md font-semibold modal-title"></h3>
+                <h3 class="text-md font-semibold title text-lg"></h3>
             </div>
             <div class="modal-body"></div>
             <div class="modal-footer">

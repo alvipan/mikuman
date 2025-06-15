@@ -58,21 +58,24 @@ class GETController extends Controller
         
         $profiles = array();
         foreach ($response as $profile) {
-            preg_match('/\(\"(.*?)\"\)/', $profile['on-login'], $match);
-            $data = explode(',', $match[1],);
+            if (isset($profile['on-login'])) {
+                preg_match('/\(\"(.*?)\"\)/', $profile['on-login'], $match);
+                $data = explode(',', $match[1],);
+            }
+            
             $item = [
-                'id' => $profile['.id'],
-                'name' => $profile['name'],
-                'ip-pool' => isset($profile['address-pool']) ? $profile['address-pool'] : 'none' ,
-                'rate-limit' => isset($profile['rate-limit']) ? $profile['rate-limit'] : '',
-                'shared-users' => $profile['shared-users'],
-                'parent-queue' => $profile['parent-queue'],
-                'expire-mode' => $data[1],
-                'price' => $data[2],
-                'validity' => $data[3],
-                'sprice' => $data[4],
-                'lock-users' => $data[6],
-                'lock-server' => $data[7],
+                'id'            => $profile['.id'],
+                'name'          => $profile['name'],
+                'ip-pool'       => isset($profile['address-pool']) ? $profile['address-pool'] : 'none' ,
+                'rate-limit'    => isset($profile['rate-limit']) ? $profile['rate-limit'] : '-',
+                'shared-users'  => $profile['shared-users'],
+                'parent-queue'  => $profile['parent-queue'],
+                'expire-mode'   => isset($data[1]) ? $data[1] : 'none',
+                'price'         => isset($data[2]) ? $data[2] : '0',
+                'validity'      => isset($data[3]) ? $data[3] : '-',
+                'sprice'        => isset($data[4]) ? $data[4] : '0',
+                'lock-users'    => isset($data[6]) ? $data[6] : 'Disable',
+                'lock-server'   => isset($data[7]) ? $data[7] : 'Disable',
             ];
             array_push($profiles, $item);
         }

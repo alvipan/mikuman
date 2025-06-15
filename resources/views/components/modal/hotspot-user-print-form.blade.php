@@ -19,7 +19,7 @@
                             </select>
                         </div>
                     </div>
-                    <div>
+                    <div class="mb-3">
                         <span class="label-text">Color Scheme</span>
                         <div class="input input-sm pe-0">
                             <span class="icon-[tabler--square-filled] size-5 my-auto color" style="color: var(--color-red-500)"></span>
@@ -41,6 +41,17 @@
                                 <option value="fuchsia-500">Fuchsia</option>
                                 <option value="pink-500">pink</option>
                                 <option value="rose-500">Rose</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="label-text">Show QR Code</span>
+                        <div class="input input-sm pe-0">
+                            <span class="icon-[tabler--qrcode] text-base-content/80 size-5 my-auto"></span>
+                            <select name="qrcode" class="select select-sm">
+                                <option value="">No</option>
+                                <option value="true">Yes</option>
                             </select>
                         </div>
                     </div>

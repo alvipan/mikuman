@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('host')->unique();
             $table->string('user');
             $table->string('pass');
-            $table->string('name')->unique()->nullable();
-            $table->string('currency')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('name')->default('Mikuman.NET');
+            $table->string('currency')->default('$');
             $table->timestamps();
         });
     }

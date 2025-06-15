@@ -1,0 +1,4 @@
+:local mac $"mac-address";
+:local time [/system clock get time ];
+        
+/system script add name="$date-|-$time-|-$user-|-{{price}}-|-$address-|-$mac-|-{{validity}}-|-{{name}}-|-$comment" owner="$month$year" source=$date comment=mikuman;

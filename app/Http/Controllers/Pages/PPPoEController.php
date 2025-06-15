@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class PPPoEController extends Controller
 {
+    public function view($page) {
+        $data = [
+            'menu' => 'pppoe',
+            'submenu' => 'pppoe-'.$page
+        ];
+        return view('development', $data);
+    }
+
     public function profiles(Request $request) {
         $data = [
             'menu' => 'pppoe',

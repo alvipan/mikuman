@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\file;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Helpers\Mikrotik;
@@ -59,10 +58,12 @@ class HotspotController extends Controller
         $ulock          = $request->ulock;
         $slock          = $request->slock;
 
-        $onlogin = !empty($expmode) ? Storage::get('/script/exp') : Storage::get('/script/noexp');
-        $recordscript = in_array($expmode, ['remc', 'ntfc']) ? Storage::get('/script/record') : '';
-        $ulockscript = $ulock != 'Disable' ? Storage::get('/script/ulock') : '';
-        $slockscript = $slock != 'Disable' ? Storage::get('/script/slock') : '';
+        $onlogin = !empty($expmode) 
+            ? File::get(public_path('/assets/scripts/exp'))
+            : File::get(public_path('/assets/scripts/noexp'));
+        $recordscript = in_array($expmode, ['remc', 'ntfc']) ? File::get(public_path('/assets/scripts/record')) : '';
+        $ulockscript = $ulock != 'Disable' ? File::get(public_path('/assets/scripts/ulock')) : '';
+        $slockscript = $slock != 'Disable' ? File::get(public_path('/assets/scripts/slock')) : '';
         $mode = in_array($expmode, ['ntf', 'ntfc']) ? 'N' : 'X';
 
         if (!empty($recordscript)) {
@@ -126,11 +127,19 @@ class HotspotController extends Controller
             ];
         }
 
-        $response = Mikrotik::request('/ip/hotspot/user/profile/remove', array('.id' => $request->id,));
+        foreach($request->id as $id) {
+            $response = Mikrotik::request('/ip/hotspot/user/profile/remove', ['.id' => $id]);
+            if (!empty($response['!trap'])) {
+                return [
+                    'success' => false,
+                    'message' => $response['!trap'][0]['message']
+                ];
+            }
+        }
 
         return [
-            'success' => empty($response),
-            'message' => empty($response) ? 'User profile has been remove' : $response['!trap'][0]['message']
+            'success' => true,
+            'message' => 'User profile has been removed.'
         ];
     }
 
@@ -254,18 +263,20 @@ class HotspotController extends Controller
 
         if ($validator->fails()) {
             return [
-                'success' => false,
+                'error' => true,
                 'message' => $validator->errors()->first()
             ];
         }
+
         $users = Mikrotik::request('/ip/hotspot/user/print', ['?comment' => $request->comment]);
         $profile = Mikrotik::request('/ip/hotspot/user/profile/print', ['?name' => $users[0]['profile']]);
 
         $data = [
-            'users' => $users,
-            'profile' => $profile,
-            'router' => Router::firstWhere('host', session('router')),
-            'color' => $request->color
+            'users'     => $users,
+            'profile'   => $profile,
+            'color'     => $request->get('color', 'red'),
+            'qrcode'    => $request->get('qrcode', null),
+            'router'    => Router::firstWhere('host', session('router'))
         ];
         return view('pages.hotspot-print', $data);
     }

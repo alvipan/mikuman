@@ -28,7 +28,7 @@
             <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
     </div>
-    <div class="flex-1 px-4 md:px-6 pb-4 md:pb-6 overflow-y-auto">
+    <div class="flex-1 px-4 md:px-6 pb-6 md:pb-6 overflow-y-auto">
             <div class="bg-base-100 flex flex-col rounded-md shadow-base-300/20 shadow-sm">
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full align-middle">

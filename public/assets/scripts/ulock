@@ -1,0 +1,4 @@
+[
+    :local mac $"mac-address";
+    /ip hotspot user set mac-address=$mac [find where name=$user]
+]; 
