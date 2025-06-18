@@ -28,5 +28,5 @@ Built on the laravel framework combined with tailwind css makes Mikuman a more m
 - Sales report
 - Etc
 
-Best Regards,
+Best Regards,<br/>
 Muhammad Irfan at Jakarta - Indonesia
