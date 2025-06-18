@@ -1,6 +1,7 @@
 <p align="center">
-    <img src="https://github.com/alvipan/mikuman/blob/main/public/screenshot.png" alt="Laravel Logo">
+    <img src="https://github.com/alvipan/mikuman/blob/main/public/favicon.svg" alt="Laravel Logo" width="72">
 </p>
+<h3 align="center">Mikuman</h3>
 
 Mikuman (Mikrotik User Manager) is an application inspired by its predecessor Mikhmon. It is a web-based application to manage Mikrotik users, both Hotspot and PPoE.
 
@@ -8,5 +9,21 @@ Mikuman is still under development and we accept the community to build it toget
 
 Built on the laravel framework combined with tailwind css makes Mikuman a more modern application than its predecessor.
 
-Warm regards
-Muhammad Irfan from Jakarta - Indonesia
+### Requirement
+* PHP >= 8.2 | 8.4
+  * ext-fileinfo
+  * ext-sqlite3
+  * ext-pdo_sqlite
+ 
+### Features
+- Managing hotspot user profiles
+- Managing hotspot users
+- Show active hotspot users
+- Print hotspot users
+- 12 build-in themes
+- Live report
+- Sales report
+- Etc
+
+Best Regards,
+Muhammad Irfan at Jakarta - Indonesia
