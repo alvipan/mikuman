@@ -5,11 +5,11 @@
     <div class="flex items-center gap-2 px-4 md:px-6 py-4">
         <h2 class="font-bold me-auto">Hotspot Profile</h2>
         <div class="tooltip [--placement:bottom]">
-            <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-primary btn-sm btn-add">
+            <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-sm btn-add">
                 <span class="icon-[tabler--plus] size-5"></span>
             </button>
             <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                <span class="tooltip-body tooltip-primary">Add Profile</span>
+                <span class="tooltip-body">Add Profile</span>
             </span>
         </div>
         <div class="input input-sm max-w-50">
@@ -18,7 +18,7 @@
             <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
     </div>
-    <div class="flex flex-col flex-1 px-4 md:px-6 md:pb-6">
+    <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
         <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
             <div class="flex px-5 py-3 gap-2">
                 <div class="input input-sm w-auto ps-1">
@@ -31,7 +31,7 @@
                 </div>
                 <button id="btn-remove" class="btn btn-soft btn-error btn-sm" disabled>Remove</button>
             </div>
-            <div class="flex-grow h-100 overflow-auto">
+            <div class="flex-grow h-90 overflow-auto">
                 <div class="inline-block min-w-full align-middle">
                     <div class="relative">
                         <table class="table min-w-full">

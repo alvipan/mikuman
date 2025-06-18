@@ -10,7 +10,7 @@
                 <span class="shrink-0" id="voucher">0</span>
             </button>
             <button class="btn btn-sm btn-warning btn-soft justify-start">
-                <span class="icon-[tabler--coins] size-4 me-1"></span>
+                <span class="currency">{{$router->currency}}</span>
                 <span class="shrink-0" id="income">0</span>
             </button>
         </div>
@@ -18,18 +18,29 @@
             <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
             <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
-        <div class="input input-sm md:w-60">
-            <span class="icon-[tabler--calendar] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
-            <input type="search" class="grow" id="date-range" />
-        </div>
     </div>
-    <div class="flex-1 px-4 md:px-6 overflow-y-auto">
-        <div class="bg-base-100 flex flex-col rounded-md shadow-base-300/20 shadow-sm mb-4 md:mb-6">
-            <div class="overflow-x-auto">
+    <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
+        <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
+            <div class="flex px-5 py-3 gap-2">
+                <div class="input input-sm w-auto ps-1 me-auto">
+                    <select class="select select-sm" id="page-entities" data-datatable-page-entities>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="label-text my-auto">/page</span>
+                </div>
+                <div class="input input-sm md:w-60">
+                    <span class="icon-[tabler--calendar] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
+                    <input type="search" class="grow" id="date-range" />
+                </div>
+            </div>
+            <div class="flex-grow h-90 overflow-x-auto">
                 <div class="inline-block min-w-full align-middle">
-                    <div class="overflow-hidden">
+                    <div class="relative">
                         <table class="table min-w-full">
-                            <thead>
+                            <thead class="bg-base-100 sticky top-0 z-5 shadow">
                                 <tr class="text-xs">
                                     <th>Date</th>
                                     <th>Time</th>

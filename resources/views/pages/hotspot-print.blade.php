@@ -15,8 +15,8 @@
     <body class="relative flex min-h-screen flex-col antialiased">
         <div class="p-2 w-full text-xs">
             @foreach($users as $user)
-            <div class="relative overflow-hidden inline-block border border-{{$color}} border-dashed rounded-1 shadow-none w-[156px] text-xs">
-                
+            <div class="relative overflow-hidden inline-block border border-{{$color}} border-dashed shadow-none w-[157px] text-xs">
+            
                 <div class="flex items-center ps-1">
                     <h2 class="hotspot-name me-auto font-bold text-[11px]">{{$router->name}}</h2>
                     <h3 class="flex items-top font-bold text-{{$color}} me-1">
@@ -39,7 +39,7 @@
                     </div>
                     <div>
                         @if($qrcode)
-                        <img class="-mb-6 bg-white ms-auto w-12.5 p-0.5" src="{{ 'data:image/png;base64,'.DNS2D::getBarcodePNG('http://'.$router['host'].'/login?user='.$user['name'].'&password='.$user['password'], 'QRCODE') }}" alt="barcode"/>
+                        <img class="-mb-6 bg-white ms-auto w-12 p-0.5" src="{{ 'data:image/png;base64,'.DNS2D::getBarcodePNG('http://'.$router['host'].'/login?user='.$user['name'].'&password='.$user['password'], 'QRCODE') }}" alt="barcode"/>
                         @endif
                     </div>
                 </div>

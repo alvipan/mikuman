@@ -45,8 +45,17 @@ class GETController extends Controller
     }
 
     public function interfaceTraffic(Request $request) {
-        $response = Mikrotik::request('/interface/monitor-traffic', $this->query($request), 'equal');
-        return $this->json($response);
+        $router = Router::firstWhere('host', session('router'));
+        if (!empty($router->interface)) {
+            $response = Mikrotik::request('/interface/monitor-traffic', ['interface' => $router->interface, 'once' => ''], 'equal');
+            return [
+                'success' => true,
+                'data' => $this->json($response[0])
+            ];
+        }
+        return [
+            'success' => false
+        ];
     }
 
     public function hotspotProfiles(Request $request) {
@@ -93,6 +102,10 @@ class GETController extends Controller
 
     public function hotspotActive(Request $request) {
         $response = Mikrotik::request('/ip/hotspot/active/print');
+        foreach ($response as $i => $v) {
+            $response[$i]['id'] = $response[$i]['.id'];
+            unset($response[$i]['.id']);
+        }
         return $this->json(['data' => $response]);
     }
 

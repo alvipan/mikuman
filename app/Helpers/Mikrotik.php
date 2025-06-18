@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Router;
 use App\Helpers\RouterosAPI;
+use Illuminate\Support\Facades\Crypt;
 
 class Mikrotik
 {
@@ -17,7 +18,7 @@ class Mikrotik
             self::$client->connect(
                 $router->host,
                 $router->user,
-                $router->pass
+                Crypt::decryptString($router->pass)
             );
             return true;
         } catch (\Throwable $e) {

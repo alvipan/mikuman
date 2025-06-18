@@ -1,4 +1,11 @@
-@props(['id'=> '','type' => 'text','name' => '','label' => '','value' => '','placeholder' => ''])
+@props([
+    'id'=> '',
+    'type' => 'text',
+    'name' => '',
+    'label' => '',
+    'value' => '',
+    'placeholder' => ''
+])
 
 <div {{$attributes}}>
     <span class="label-text">{{$label}}</span>

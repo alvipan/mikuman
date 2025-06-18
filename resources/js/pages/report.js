@@ -18,24 +18,29 @@ window.addEventListener("load", function () {
             {
                 data: "price",
                 render: function (data) {
-                    return new Intl.NumberFormat().format(data);
+                    let currency = $("#setting-currency").val();
+                    let price = new Intl.NumberFormat().format(data);
+                    return (
+                        '<span class="currency">' +
+                        currency +
+                        "</span> " +
+                        price
+                    );
                 },
             },
         ],
-    });
-
-    const inputs = document.querySelectorAll(".dt-container thead input");
-
-    inputs.forEach((input) => {
-        input.addEventListener("keydown", function (evt) {
-            if ((evt.metaKey || evt.ctrlKey) && evt.key === "a") this.select();
-        });
     });
 
     let summary = {
         voucher: 0,
         income: 0,
     };
+
+    $("#page-entities").on("change", function () {
+        summary.voucher = 0;
+        summary.income = 0;
+        reportTable.dataTable.draw();
+    });
 
     let start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     let end = new Date();

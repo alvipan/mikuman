@@ -41,3 +41,33 @@ window.formatTimes = function (x) {
 
     return (d > 0 ? d + "d " : "") + h + ":" + m + ":" + s;
 };
+
+$("#setting-theme").on("change", function () {
+    $("html").attr("data-theme", $(this).val());
+});
+
+$("#setting-currency").on("change", function () {
+    $(".currency").html($(this).val());
+});
+
+$("#form-setting").on("submit", function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const data = form.serializeArray();
+    const btn = form.find(".btn-submit");
+    const url = "/router/edit";
+
+    btn.attr("disabled", true).html(
+        '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
+    );
+
+    $.post(url, { data: data }, function (res) {
+        if (res.success) {
+            showAlert("success", "Changes have been saved.");
+        } else {
+            showAlert("error", res.message);
+        }
+
+        btn.attr("disabled", false).html("Save changes");
+    });
+});

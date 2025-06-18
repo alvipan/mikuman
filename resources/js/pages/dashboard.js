@@ -1,6 +1,4 @@
 window.addEventListener("load", function () {
-    const selectInterface = HSSelect.getInstance("#select-interface");
-    // Default Apexchart init
     const chartEl = document.querySelector("#traffic-chart");
     const chartConfig = {
         chart: {
@@ -169,37 +167,34 @@ window.addEventListener("load", function () {
                 $("#income-this-month").html(res["this-month"]);
                 $("#income-last-month").html(res["last-month"]);
             }),
-            $.get(
-                "/get/interface/traffic?interface=HOTSPOT&once=",
-                function (res) {
-                    chartConfig.series[0].data.shift();
-                    chartConfig.series[0].data.push(
-                        res[0]["tx-bits-per-second"]
-                    );
-                    chartConfig.series[1].data.shift();
-                    chartConfig.series[1].data.push(
-                        res[0]["rx-bits-per-second"]
-                    );
-
-                    let d = new Date();
-                    let t =
-                        d.getHours() +
-                        ":" +
-                        d.getMinutes() +
-                        ":" +
-                        d.getSeconds();
-
-                    chartConfig.xaxis.categories.shift();
-                    chartConfig.xaxis.categories.push(t);
-
-                    trafficChart.updateSeries(chartConfig.series);
-                    trafficChart.updateOptions({
-                        xaxis: {
-                            categories: chartConfig.xaxis.categories,
-                        },
-                    });
+            $.get("/get/interface/traffic", function (res) {
+                if (!res.success) {
+                    return;
                 }
-            ),
+
+                chartConfig.series[0].data.shift();
+                chartConfig.series[0].data.push(
+                    res.data.original["tx-bits-per-second"]
+                );
+                chartConfig.series[1].data.shift();
+                chartConfig.series[1].data.push(
+                    res.data.original["rx-bits-per-second"]
+                );
+
+                let d = new Date();
+                let t =
+                    d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+
+                chartConfig.xaxis.categories.shift();
+                chartConfig.xaxis.categories.push(t);
+
+                trafficChart.updateSeries(chartConfig.series);
+                trafficChart.updateOptions({
+                    xaxis: {
+                        categories: chartConfig.xaxis.categories,
+                    },
+                });
+            }),
             $.get("/get/logs", function (res) {
                 $("#logs").html("");
                 const tr =
@@ -231,5 +226,6 @@ window.addEventListener("load", function () {
             }
         );
     }
+
     getData();
 });

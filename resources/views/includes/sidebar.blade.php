@@ -1,6 +1,6 @@
 <aside id="sidenav" class="overlay [--auto-close:sm] [--overlay-backdrop:false] sm:shadow-none overlay-open:translate-x-0 drawer drawer-start hidden max-w-64 sm:relative sm:z-0 sm:flex sm:translate-x-0" role="dialog" tabindex="-1">
     <nav class="capitalize py-4 px-6 sm:px-8">
-        <ul class="space-y-2.5 accordion">
+        <ul class="space-y-2.5 accordion mb-auto">
             <li class="sm:hidden">
                 <div class="flex items-center justify-between py-1">
                     <a href="/" class="flex items-center gap-3 text-xl font-semibold">
@@ -203,6 +203,20 @@
                         'gap-3',
                         'py-1',
                         'text-base-content/70',
+                        'hover:text-base-content' => $menu != 'about',
+                        'text-primary' => $menu == 'about'
+                    ]) href="/about">
+                    <span class="icon-[tabler--help] size-5"></span>
+                    About
+                </a>
+            </li>
+            <li>
+                <a @class([
+                        'flex',
+                        'items-center',
+                        'gap-3',
+                        'py-1',
+                        'text-base-content/70',
                         'hover:text-base-content'
                     ]) href="/logout">
                     <span class="icon-[tabler--logout] size-5"></span>
@@ -210,5 +224,12 @@
                 </a>
             </li>
         </ul>
+        
     </nav>
+    <div class="drawer-footer">
+        <a href="https://sociabuzz.com/alvipan/tribe" target="_blank" class="btn btn-primary w-full">
+            <span class="icon-[tabler--moneybag-heart] size-5"></span>
+            Donate
+        </a>
+    </div>
 </aside>

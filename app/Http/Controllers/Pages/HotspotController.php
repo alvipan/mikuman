@@ -100,7 +100,7 @@ class HotspotController extends Controller
             "parent-queue" => $parentqueue,
         ]);
 
-        if(!empty($response['!trap'][0]['message'])) {
+        if(!empty($response['!trap'])) {
             return [
                 'success' => false,
                 'message' => $response['!trap'][0]['message']
@@ -112,34 +112,6 @@ class HotspotController extends Controller
             'message' => !empty($request->id) 
                 ? 'Hotspot user profile has been update.'
                 : 'New hotspot user profile has been added.',
-        ];
-    }
-
-    public function removeUserProfile(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'message' => 'Invalid request.',
-            ];
-        }
-
-        foreach($request->id as $id) {
-            $response = Mikrotik::request('/ip/hotspot/user/profile/remove', ['.id' => $id]);
-            if (!empty($response['!trap'])) {
-                return [
-                    'success' => false,
-                    'message' => $response['!trap'][0]['message']
-                ];
-            }
-        }
-
-        return [
-            'success' => true,
-            'message' => 'User profile has been removed.'
         ];
     }
 
@@ -236,26 +208,6 @@ class HotspotController extends Controller
         ];
     }
 
-    public function removeUser(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'message' => 'Invalid request.',
-            ];
-        }
-
-        $response = Mikrotik::request('/ip/hotspot/user/remove', array('.id' => $request->id,));
-
-        return [
-            'success' => empty($response),
-            'message' => empty($response) ? 'User has been remove' : $response['!trap'][0]['message']
-        ];
-    }
-
     public function print(Request $request) {
         $validator = Validator::make($request->all(), [
             'comment' => 'required'
@@ -288,5 +240,53 @@ class HotspotController extends Controller
             $result .= $char[rand(0, strlen($char) -1)];
         }
         return $result;
+    }
+
+    public function remove(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'type' => 'required',
+            'data' => 'required'
+        ]);
+
+        $cfg = [
+            'user' => [
+                'url' => '/ip/hotspot/user/remove',
+                'msg' => 'The user(s) has been removed.',
+            ],
+            'profile' => [
+                'url' => '/ip/hotspot/user/profile/remove',
+                'msg' => 'The user profile(s) has been removed.',
+            ],
+            'active'  => [
+                'url' => '/ip/hotspot/user/active/remove',
+                'msg' => 'The active user(s) has been removed',
+            ],
+        ];
+
+        if (
+            $validator->fails() || 
+            !isset($cfg[$request->type]) || 
+            count($request->data) <= 0
+        ) {
+            return [
+                'success' => false,
+                'message' => 'Invalid request.',
+            ];
+        }
+
+        foreach($request->data as $id) {
+            $response = Mikrotik::request($cfg[$request->type]['url'], ['.id' => $id]);
+            if (isset($response['!trap'])) {
+                return [
+                    'success' => false,
+                    'message' => $response['!trap'][0]['message']
+                ];
+            }
+        }
+
+        return [
+            'success' => true,
+            'message' => $cfg[$request->type]['msg']
+        ];
     }
 }

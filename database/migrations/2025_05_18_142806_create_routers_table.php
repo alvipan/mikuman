@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('pass');
             $table->string('name')->default('Mikuman.NET');
             $table->string('currency')->default('$');
+            $table->string('interface')->nullable();
+            $table->string('theme')->default('dark');
             $table->timestamps();
         });
     }

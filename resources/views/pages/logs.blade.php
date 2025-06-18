@@ -13,13 +13,24 @@
             <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
     </div>
-    <div class="flex-1 px-4 md:px-6 pb-4 md:pb-6 overflow-auto">
-        <div class="card">
-            <div class="overflow-x-auto">
+    <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
+        <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
+            <div class="flex px-5 py-3 gap-2">
+                <div class="input input-sm w-auto ps-1 me-auto">
+                    <select class="select select-sm" id="page-entities" data-datatable-page-entities>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="label-text my-auto">/page</span>
+                </div>
+            </div>
+            <div class="flex-grow h-90 overflow-x-auto">
                 <div class="inline-block min-w-full align-middle">
-                    <div class="overflow-hidden">
+                    <div class="relative">
                         <table class="table min-w-full">
-                            <thead>
+                            <thead class="bg-base-100 sticky top-0 z-5 shadow">
                                 <tr class="text-xs">
                                     <th>Date/Time</th>
                                     <th>Type</th>

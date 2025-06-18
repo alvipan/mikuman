@@ -52,4 +52,29 @@ class RouterController extends Controller
             'message' => 'The router has been successfully deleted',
         ];
     }
+
+    public function edit(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'data' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => 'The request sent is invalid.',
+            ];
+        }
+
+        $router = Router::firstWhere('host', session('router'));
+        foreach($request->data as $data) {
+            $router->{$data['name']} = $data['value'];
+        }
+        $router->save();
+
+        return [
+            'success' => true,
+            'message' => 'The router has been update.'
+        ];
+    }
 }
