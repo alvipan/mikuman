@@ -8,7 +8,7 @@
 
 Mikuman (Mikrotik User Manager) is an application inspired by its predecessor Mikhmon. It is a web-based application to manage Mikrotik users, both Hotspot and PPoE.
 
-Mikuman is still under development and we accept the community to build it together and do testing, debugging, fixing, updating, etc.
+Mikuman is open source. Community contributions are welcome! Feel free to fork the repo and send Pull Requests for improvements, enhancements, or new features.
 
 Built on the laravel framework combined with tailwind css makes Mikuman a more modern application than its predecessor.
 
@@ -17,6 +17,9 @@ Built on the laravel framework combined with tailwind css makes Mikuman a more m
   * ext-fileinfo
   * ext-sqlite3
   * ext-pdo_sqlite
+* Rourer Board MikroTik Level 4.
+* Clock speed CPU 650 MHz
+* Router OS v6.3x.x - v7.9
  
 ### Features
 - Managing hotspot user profiles
@@ -27,6 +30,13 @@ Built on the laravel framework combined with tailwind css makes Mikuman a more m
 - Live report
 - Sales report
 - Etc
+
+### Instalation
+Mikuman can run on any web server, but for security reasons we recommend that you only run it on your local server.
+
+The easy way to run Mikuman on your computer is to simply download <b>mikuman-vX.X-webserver.zip</b> and extract it. We still include Mikhmon's webserver in it. Run MikhmonWebserver.exe and start the server.
+
+If you want to run Mikuman without MikhmonWebserver. You can download mikuman-vX.X.zip and install it on your server. In order for Mikuman to run properly, make sure the document root is pointed to the public folder.
 
 Best Regards,<br/>
 Muhammad Irfan at Jakarta - Indonesia
