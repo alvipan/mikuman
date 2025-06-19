@@ -45,9 +45,9 @@ if (session('router')) {
                 </div>
             </div>
         </main>
-        @yield('modal')
         @if (session('router'))
-        <x-modal.setting-form />
+        <x-modal.expire-monitor-form/>
         @endif
+        @yield('modal')
     </body>
 </html>

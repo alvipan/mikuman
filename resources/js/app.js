@@ -1,6 +1,7 @@
 import "./bootstrap";
 import "flyonui/flyonui";
 import "../../node_modules/flyonui/dist/helper-apexcharts.js";
+import { HSOverlay } from "flyonui/flyonui";
 
 $.ajaxSetup({
     headers: {
@@ -41,6 +42,34 @@ window.formatTimes = function (x) {
 
     return (d > 0 ? d + "d " : "") + h + ":" + m + ":" + s;
 };
+
+$.get("/get/expire-monitor", function (res) {
+    if (res.success) {
+        if (res.data.mikuman <= 0) {
+            HSOverlay.open("#expire-monitor-form-modal");
+        }
+    }
+});
+
+$("#expire-monitor-form").on("submit", function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const data = form.serializeArray();
+    const btn = form.find(".btn-submit");
+    const btnText = btn.html();
+
+    btn.attr("disabled", true).html(
+        '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
+    );
+
+    $.post("/post/expire-monitor", data, function (res) {
+        if (res.success) {
+            HSOverlay.close("#expire-monitor-form-modal");
+            showAlert("success", res.message);
+            btn.attr("disabled", false).html(btnText);
+        }
+    });
+});
 
 $("#setting-theme").on("change", function () {
     $("html").attr("data-theme", $(this).val());

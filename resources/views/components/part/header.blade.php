@@ -4,10 +4,10 @@
             <span class="icon-[tabler--menu-2] size-5"></span>
         </button>
         <a href="/" class="flex items-center gap-3 text-xl font-semibold">
-            <span class="icon-[tabler--comet]"></span>
-            Mikuman
+            <span class="icon-[tabler--comet] text-primary size-6"></span>
+            {{config('app.name')}}
         </a>
-        <span class="text-sm text-base-content/60 me-auto">v{{env('APP_VERSION')}}</span>
+        <span class="text-sm text-base-content/60 me-auto">{{'v'.config('app.version')}}</span>
         <div class="flex gap-2 items-center">
             <a href="https://fb.me/alvipan93" target="_blank" class="btn btn-sm btn-text btn-square">
                 <span class="icon-[tabler--brand-facebook] size-6"></span>

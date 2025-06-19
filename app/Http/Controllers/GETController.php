@@ -196,6 +196,26 @@ class GETController extends Controller
         return $this->json(['data' => array_reverse($arr)]);
     }
 
+    public function expireMonitor(Request $request) {
+        $mikuman = Mikrotik::request('/system/scheduler/print', [
+            '?name' => 'Mikuman-Expire-Monitor', '?disabled' => 'false'
+        ]);
+
+        $mikhmon = Mikrotik::request('/system/scheduler/print', [
+            '?name' => 'Mikhmon-Expire-Monitor', '?disabled' => 'false'
+        ]);
+
+        $result = [
+            'success' => true,
+            'data' => [
+                'mikuman' => count($mikuman),
+                'mikhmon' => count($mikhmon)
+            ]
+        ];
+
+        return $result;
+    }
+
     public function query(Request $request) {
         $conditions = [];
         foreach($request->query() as $key => $val) {

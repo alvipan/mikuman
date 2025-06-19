@@ -7,20 +7,13 @@ use Illuminate\Support\Facades\Crypt;
 use App\Models\Router;
 use App\Helpers\Mikrotik;
 use App\Http\Controllers\GETController;
+use App\Http\Controllers\POSTController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\HotspotController;
 use App\Http\Controllers\Pages\PPPoEController;
 use App\Http\Controllers\Pages\ReportController;
 use App\Http\Controllers\Pages\LogController;
 use App\Http\Controllers\Pages\RouterController;
-
-Route::get('/about', function() {
-    $data = [
-        'menu' => 'about',
-        'submenu' => ''
-    ];
-    return view('pages.about', $data);
-});
 
 Route::match(['post','get'],'/', function (Request $request) 
 {
@@ -72,6 +65,14 @@ Route::get('/logout', function(Request $request)
     return redirect('/');
 });
 
+Route::get('/about', function() {
+    $data = [
+        'menu' => 'about',
+        'submenu' => ''
+    ];
+    return view('pages.about', $data);
+});
+
 Route::middleware('connected')->controller(GETController::class)->group(function() {
     Route::get('/get/test', 'test');
     Route::get('/system/resources', 'systemResources');
@@ -88,6 +89,11 @@ Route::middleware('connected')->controller(GETController::class)->group(function
     Route::get('/ppp/active', 'pppActive');
     Route::get('/get/report', 'report');
     Route::get('/get/logs', 'logs');
+    Route::get('/get/expire-monitor', 'expireMonitor');
+});
+
+Route::middleware('connected')->controller(POSTController::class)->group(function() {
+    Route::post('/post/expire-monitor', 'expireMonitor');
 });
 
 Route::controller(RouterController::class)->group(function() {

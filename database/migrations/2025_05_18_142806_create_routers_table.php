@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('user');
             $table->string('pass');
             $table->string('name')->default('Mikuman.NET');
-            $table->string('currency')->default('$');
+            $table->string('currency')->default('Rp');
             $table->string('interface')->nullable();
             $table->string('theme')->default('dark');
+            $table->string('mikhmon_expire_monitor')->default('enabled');
             $table->timestamps();
         });
     }
