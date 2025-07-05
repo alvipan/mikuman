@@ -1,5 +1,4 @@
-window.addEventListener("load", function () 
-{
+window.addEventListener("load", function () {
     let selected = [];
     const profileTable = new HSDataTable("#profile-table", {
         pageLength: 10,
@@ -7,23 +6,23 @@ window.addEventListener("load", function ()
             pageBtnClasses: "btn btn-text btn-square btn-sm",
         },
         rowSelectingOptions: {
-            selectAllSelector: "#table-checkbox-all"
+            selectAllSelector: "#table-checkbox-all",
         },
         ajax: "/get/hotspot/profiles",
         columns: [
             {
-                data: "id", 
-                render: function() {
-                    return ('<input type="checkbox" class="checkbox checkbox-xs" data-datatable-row-selecting-individual="" />');
-                } 
+                data: "id",
+                render: function () {
+                    return '<input type="checkbox" class="checkbox checkbox-xs" data-datatable-row-selecting-individual="" />';
+                },
             },
             { data: "name" },
             { data: "rate-limit", default: "" },
             { data: "validity", default: "" },
             { data: "price", default: 0 },
             { data: "shared-users", default: 0 },
-            { data: "lock-users", default: 'Disable' },
-            { data: "lock-server", default: 'Disable' },
+            { data: "lock-users", default: "Disable" },
+            { data: "lock-server", default: "Disable" },
             {
                 data: "id",
                 render: function (data) {
@@ -103,8 +102,8 @@ window.addEventListener("load", function ()
             : $('input[name="validity"]').attr("disabled", true);
     });
 
-    $("#content").on("click", "#btn-remove", function() {
-        const data = profileTable.dataTable.rows('.selected').data();
+    $("#content").on("click", "#btn-remove", function () {
+        const data = profileTable.dataTable.rows(".selected").data();
         removeProfile(data);
     });
 
@@ -115,19 +114,30 @@ window.addEventListener("load", function ()
         removeProfile(data);
     });
 
-    profileTable.dataTable.on('change', 'thead input[type="checkbox"]', function() {
-        $('tbody tr input[type="checkbox"]').trigger('change');
-    });
-
-    profileTable.dataTable.on('change', 'tbody input[type="checkbox"]', function() {
-        const row = $(this).closest('tr');
-        if ($(this).is(':checked')) {
-            row.addClass('selected');
-        } else {
-            row.removeClass('selected');
+    profileTable.dataTable.on(
+        "change",
+        'thead input[type="checkbox"]',
+        function () {
+            $('tbody tr input[type="checkbox"]').trigger("change");
         }
-        $('#btn-remove').attr('disabled', (profileTable.dataTable.rows('.selected').data().length <= 0))
-    });
+    );
+
+    profileTable.dataTable.on(
+        "change",
+        'tbody input[type="checkbox"]',
+        function () {
+            const row = $(this).closest("tr");
+            if ($(this).is(":checked")) {
+                row.addClass("selected");
+            } else {
+                row.removeClass("selected");
+            }
+            $("#btn-remove").attr(
+                "disabled",
+                profileTable.dataTable.rows(".selected").data().length <= 0
+            );
+        }
+    );
 
     function removeProfile(data) {
         HSOverlay.open("#confirm-modal");
@@ -137,17 +147,16 @@ window.addEventListener("load", function ()
 
         title.html("Confirmation");
         body.html(
-            "<p>The user profile below will be deleted.</p>" +
-            "<items></items>"
+            "<p>The user profile below will be deleted.</p>" + "<items></items>"
         );
 
         selected = [];
-        $.each(data, function(i, v) {
+        $.each(data, function (i, v) {
             selected.push(v.id);
-            body.find('items').append(
-                '<span class="badge badge-soft badge-error badge-sm">'+
-                v.name+
-                '</span> '
+            body.find("items").append(
+                '<span class="badge badge-soft badge-error badge-sm">' +
+                    v.name +
+                    "</span> "
             );
         });
     }
@@ -157,16 +166,20 @@ window.addEventListener("load", function ()
         btn.html(
             '<span class="icon-[svg-spinners--90-ring-with-bg] size-4"></span>'
         );
-        $.post("/hotspot/remove", { type: 'profile', data: selected }, function(res) {
-            if (res.success) {
-                showAlert("success", res.message, "tabler--circle-check");
-                profileTable.dataTable.ajax.reload();
-            } else {
-                showAlert("error", res.message, "tabler--alert");
+        $.post(
+            "/hotspot/remove",
+            { type: "profile", data: selected },
+            function (res) {
+                if (res.success) {
+                    showAlert("success", res.message, "tabler--circle-check");
+                    profileTable.dataTable.ajax.reload();
+                } else {
+                    showAlert("error", res.message, "tabler--alert");
+                }
+                btn.html("Confirm");
+                HSOverlay.close("#confirm-modal");
+                $("#btn-remove").attr("disabled", true);
             }
-            btn.html("Confirm");
-            HSOverlay.close("#confirm-modal");
-            $("#btn-remove").attr("disabled", true);
-        });
+        );
     });
 });

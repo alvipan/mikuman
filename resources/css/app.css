@@ -11,9 +11,18 @@
 @import "flyonui/src/vendor/flatpickr.css";
 @import "apexcharts/src/assets/apexcharts.css";
 
+@font-face {
+    font-family: Titillium;
+    font-weight: 200 300 400 500 600 700;
+    src: url("../fonts/Titillium/Regular.ttf"),
+        url("../fonts/Titillium/Light.ttf"),
+        url("../fonts/Titillium/SemiBold.ttf"),
+        url("../fonts/Titillium/Italic.ttf"), url("../fonts/Titillium/Bold.ttf");
+}
+
 @plugin "flyonui/theme" {
     name: "dark";
     default: true;
-    --font-sans: sans-serif, system-ui;
+    --font-sans: "Titillium";
     --color-primary: oklch(67.3% 0.182 276.935);
 }

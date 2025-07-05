@@ -1,59 +1,39 @@
 @extends('app')
 
 @section('content')
-<div id="users-table" class="flex flex-col h-[calc(100vh-4rem)]">
-    <div class="flex items-center max-md:grid max-md:grid-cols-2 gap-3 px-4 md:px-6 py-4">
-        <h2 class="font-bold me-auto">Hotspot Users</h2>
-        <div class="flex gap-2 justify-end">
-            <div class="tooltip [--placement:bottom]">
-                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#hotspot-user-form-modal">
-                    <span class="icon-[tabler--users-plus] size-5"></span>
-                </button>
-                <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                    <span class="tooltip-body">Generate users</span>
-                </span>
-            </div>
-            <div class="tooltip [--placement:bottom]">
-                <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-sm" aria-haspopup="dialog" aria-expanded="false" aria-controls="middle-center-modal" data-overlay="#hotspot-user-print-form-modal">
-                    <span class="icon-[tabler--printer] size-5"></span>
-                </button>
-                <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                    <span class="tooltip-body">Print</span>
-                </span>
-            </div>
-            <div class="input input-sm max-w-50">
-                    <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
-                    <label class="sr-only" for="table-input-search"></label>
-                    <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
-                </div>
+<div id="active-table" class="flex flex-col h-[calc(100vh-4rem)]">
+    <div class="flex items-center gap-2 px-4 md:px-6 py-4">
+        <h2 class="font-bold me-auto">Hotspot Active</h2>
+        <div data-datatable-info="" class="btn btn-soft btn-success btn-sm">
+            <span class="icon-[tabler--user] size-5"></span>
+            <span data-datatable-info-length="">0</span>
+        </div>
+        <div class="tooltip [--placement:bottom]">
+            <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-reload btn-sm">
+                <span class="icon-[tabler--reload] size-5"></span>
+            </button>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body tooltip-primary">Refresh</span>
+            </span>
+        </div>
+        <div class="input input-sm max-w-50">
+            <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>
+            <label class="sr-only" for="table-input-search"></label>
+            <input type="search" class="grow" placeholder="Search..." id="table-input-search" data-datatable-search="" />
         </div>
     </div>
     <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
         <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
             <div class="flex px-5 py-3 gap-2">
-                <div class="input input-sm w-auto ps-1">
+                <div class="input input-sm w-auto px-0">
                     <select class="select select-sm" data-datatable-page-entities>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+                        <option value="10">10 / page</option>
+                        <option value="25">25 / page</option>
+                        <option value="50">50 / page</option>
                     </select>
-                    <span class="label-text my-auto">/page</span>
                 </div>
                 <button id="btn-remove" class="btn btn-soft btn-error btn-sm" disabled>Remove</button>
-                <div class="flex gap-2 ms-auto">
-                    <select class="select select-sm select-server">
-                        <option value="">Server</option>
-                    </select>
-                    <select class="select select-sm select-profile">
-                        <option value="">Profile</option>
-                    </select>
-                    <select class="select select-sm select-comment">
-                        <option value="">Comment</option>
-                    </select>
-                </div>
             </div>
-
             <div class="flex-grow h-90 overflow-x-auto">
                 <div class="inline-block min-w-full align-middle">
                     <div class="relative">
@@ -67,12 +47,10 @@
                                         </div>
                                     </th>
                                     <th>Server</th>
-                                    <th>Name</th>
-                                    <th>Profile</th>
+                                    <th>User</th>
+                                    <th>MAC Address</th>
+                                    <th>IP Address</th>
                                     <th>Uptime</th>
-                                    <th>Bytes In</th>
-                                    <th>Bytes Out</th>
-                                    <th>Comment</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -109,11 +87,8 @@
     </div>
 </div>
 <x-modal.confirm />
-<x-modal.hotspot-user-form />
-<x-modal.hotspot-user-edit-form />
-<x-modal.hotspot-user-print-form />
 @endsection
 
 @section('js')
-@vite(['resources/js/pages/hotspot-users.js'])
+@vite(['resources/js/pages/hotspot/active.js'])
 @endsection

@@ -10,20 +10,19 @@
             <div class="">
                 <label class="label-text" for="setting-theme">Theme</label>
                 <select name="theme" class="select select-sm" id="setting-theme">
-                    <option value="light" {{$router->theme == 'light' ? 'selected' : ''}}>Light</option>
-                    <option value="dark" {{$router->theme == 'dark' ? 'selected' : ''}}>Dark (default)</option>
-                    <option value="black" {{$router->theme == 'black' ? 'selected' : ''}}>Black</option>
-                    <option value="corporate" {{$router->theme == 'corporate' ? 'selected' : ''}}>Corporate</option>
-                    <option value="ghibli">Ghibli</option>
-                    <option value="gourmet">Gourmet</option>
-                    <option value="luxury">Luxury</option>
-                    <option value="mintlify">Mintlify</option>
-                    <option value="shadcn">Shadcn</option>
-                    <option value="slack">Slack</option>
-                    <option value="soft">Soft</option>
-                    <option value="valorant">Valorant</option>
+                    <option value="light" @selected($router->theme == 'light')>Light</option>
+                    <option value="dark" @selected($router->theme == 'dark')>Dark (default)</option>
+                    <option value="black" @selected($router->theme == 'black')>Black</option>
+                    <option value="corporate" @selected($router->theme == 'corporate')>Corporate</option>
+                    <option value="ghibli" @selected($router->theme == 'ghibli')>Ghibli</option>
+                    <option value="gourmet" @selected($router->theme == 'gourmet')>Gourmet</option>
+                    <option value="luxury" @selected($router->theme == 'luxury')>Luxury</option>
+                    <option value="mintlify" @selected($router->theme == 'mintlify')>Mintlify</option>
+                    <option value="shadcn" @selected($router->theme == 'shadcn')>Shadcn</option>
+                    <option value="slack" @selected($router->theme == 'slack')>Slack</option>
+                    <option value="soft" @selected($router->theme == 'soft')>Soft</option>
+                    <option value="valorant" @selected($router->theme == 'valorant')>Valorant</option>
                 </select>
-                <span class="helper-text">Define interface for live traffic monitor.</span>
             </div>
             <div class="">
                 <label class="label-text" for="setting-name">Name</label>

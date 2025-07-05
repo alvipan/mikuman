@@ -28,7 +28,7 @@ if (session('router')) {
             <x-part.header/>
             <x-drawer.setting />
             <div class="container mx-auto max-w-screen-2xl grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)]">
-                @include('includes.sidebar')
+                <x-drawer.sidebar menu="{{$menu}}" submenu="{{$submenu}}"/>
                 <div class="flex flex-col h-[calc(100vh-4rem)] bg-base-200 md:rounded-tl-2xl 2xl:rounded-t-2xl" id="content">
             @endif
                     @yield('content')

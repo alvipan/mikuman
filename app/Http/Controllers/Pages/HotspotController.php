@@ -17,7 +17,15 @@ class HotspotController extends Controller
             'menu' => 'hotspot',
             'submenu' => 'hotspot-profiles'
         ];
-        return view('pages.hotspot-profiles', $data);
+        return view('pages.hotspot.profiles', $data);
+    }
+
+    public function users(Request $request) {
+        $data = [
+            'menu' => 'hotspot',
+            'submenu' => 'hotspot-users'
+        ];
+        return view('pages.hotspot.users', $data);
     }
 
     public function active(Request $request) {
@@ -25,7 +33,32 @@ class HotspotController extends Controller
             'menu' => 'hotspot',
             'submenu' => 'hotspot-active'
         ];
-        return view('pages.hotspot-active', $data);
+        return view('pages.hotspot.active', $data);
+    }
+
+    public function print(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'error' => true,
+                'message' => $validator->errors()->first()
+            ];
+        }
+
+        $users = Mikrotik::request('/ip/hotspot/user/print', ['?comment' => $request->comment]);
+        $profile = Mikrotik::request('/ip/hotspot/user/profile/print', ['?name' => $users[0]['profile']]);
+
+        $data = [
+            'users'     => $users,
+            'profile'   => $profile,
+            'color'     => $request->get('color', 'red'),
+            'qrcode'    => $request->get('qrcode', null),
+            'router'    => Router::firstWhere('host', session('router'))
+        ];
+        return view('pages.hotspot.print', $data);
     }
 
     public function submitUserProfile(Request $request) {
@@ -80,25 +113,25 @@ class HotspotController extends Controller
         }
 
         $response = !empty($request->id)
-        ? Mikrotik::request('/ip/hotspot/user/profile/set', [
-            ".id" => $request->id,
-            "name" => $name,
-            "address-pool" => $ippool,
-            "rate-limit" => $ratelimit,
-            "shared-users" => $sharedusers,
-            "status-autorefresh" => "1m",
-            "on-login" => trim(preg_replace('/\s+/', ' ', $onlogin)),
-            "parent-queue" => $parentqueue,
-        ])
-        : Mikrotik::request('/ip/hotspot/user/profile/add', [
-            "name" => $name,
-            "address-pool" => $ippool,
-            "rate-limit" => $ratelimit,
-            "shared-users" => $sharedusers,
-            "status-autorefresh" => "1m",
-            "on-login" => trim(preg_replace('/\s+/', ' ', $onlogin)),
-            "parent-queue" => $parentqueue,
-        ]);
+            ? Mikrotik::request('/ip/hotspot/user/profile/set', [
+                ".id" => $request->id,
+                "name" => $name,
+                "address-pool" => $ippool,
+                "rate-limit" => $ratelimit,
+                "shared-users" => $sharedusers,
+                "status-autorefresh" => "1m",
+                "on-login" => trim(preg_replace('/\s+/', ' ', $onlogin)),
+                "parent-queue" => $parentqueue,
+            ])
+            : Mikrotik::request('/ip/hotspot/user/profile/add', [
+                "name" => $name,
+                "address-pool" => $ippool,
+                "rate-limit" => $ratelimit,
+                "shared-users" => $sharedusers,
+                "status-autorefresh" => "1m",
+                "on-login" => trim(preg_replace('/\s+/', ' ', $onlogin)),
+                "parent-queue" => $parentqueue,
+            ]);
 
         if(!empty($response['!trap'])) {
             return [
@@ -113,14 +146,6 @@ class HotspotController extends Controller
                 ? 'Hotspot user profile has been update.'
                 : 'New hotspot user profile has been added.',
         ];
-    }
-
-    public function users(Request $request) {
-        $data = [
-            'menu' => 'hotspot',
-            'submenu' => 'hotspot-users'
-        ];
-        return view('pages.hotspot-users', $data);
     }
 
     public function generateUsers(Request $request) {
@@ -206,31 +231,6 @@ class HotspotController extends Controller
             'success' => true,
             'message' => 'Hotspot users has been updated'
         ];
-    }
-
-    public function print(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'comment' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'error' => true,
-                'message' => $validator->errors()->first()
-            ];
-        }
-
-        $users = Mikrotik::request('/ip/hotspot/user/print', ['?comment' => $request->comment]);
-        $profile = Mikrotik::request('/ip/hotspot/user/profile/print', ['?name' => $users[0]['profile']]);
-
-        $data = [
-            'users'     => $users,
-            'profile'   => $profile,
-            'color'     => $request->get('color', 'red'),
-            'qrcode'    => $request->get('qrcode', null),
-            'router'    => Router::firstWhere('host', session('router'))
-        ];
-        return view('pages.hotspot-print', $data);
     }
 
     private function randString($length) {

@@ -5,9 +5,9 @@ namespace App\View\Components\Modal;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use App\Models\Router;
+use App\Helpers\Mikrotik;
 
-class SettingForm extends Component
+class PppoeUserForm extends Component
 {
     /**
      * Create a new component instance.
@@ -23,8 +23,8 @@ class SettingForm extends Component
     public function render(): View|Closure|string
     {
         $data = [
-            'router' => Router::firstWhere('host', session('router'))
+            'profiles' => Mikrotik::request('/ppp/profile/print')
         ];
-        return view('components.modal.setting-form', $data);
+        return view('components.modal.pppoe-user-form', $data);
     }
 }

@@ -22,14 +22,12 @@
     <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
         <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
             <div class="flex px-5 py-3 gap-2">
-                <div class="input input-sm w-auto ps-1 me-auto">
+                <div class="input input-sm w-auto px-0 me-auto">
                     <select class="select select-sm" id="page-entities" data-datatable-page-entities>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+                        <option value="10">10 / page</option>
+                        <option value="25">25 / page</option>
+                        <option value="50">50 / page</option>
                     </select>
-                    <span class="label-text my-auto">/page</span>
                 </div>
                 <div class="input input-sm md:w-60">
                     <span class="icon-[tabler--calendar] text-base-content/80 my-auto me-3 size-4 shrink-0"></span>

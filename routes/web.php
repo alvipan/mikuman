@@ -84,9 +84,9 @@ Route::middleware('connected')->controller(GETController::class)->group(function
     Route::get('/get/hotspot/profiles', 'hotspotProfiles');
     Route::get('/get/hotspot/users', 'hotspotUsers');
     Route::get('/get/hotspot/active', 'hotspotActive');
-    Route::get('/ppp/profiles', 'pppProfiles');
-    Route::get('/ppp/users', 'pppUsers');
-    Route::get('/ppp/active', 'pppActive');
+    Route::get('/get/pppoe/profiles', 'pppProfiles');
+    Route::get('/get/pppoe/users', 'pppUsers');
+    Route::get('/get/pppoe/active', 'pppActive');
     Route::get('/get/report', 'report');
     Route::get('/get/logs', 'logs');
     Route::get('/get/expire-monitor', 'expireMonitor');
@@ -118,6 +118,12 @@ Route::middleware('connected')->controller(HotspotController::class)->group(func
 });
 
 Route::middleware('connected')->controller(PPPoEController::class)->group(function() {
+    Route::get('/pppoe/profiles', 'profiles');
+    Route::post('/pppoe/profiles/submit', 'submitProfile');
+    Route::get('/pppoe/users', 'users');
+    Route::post('/pppoe/users/submit', 'submitUser');
+    Route::get('/pppoe/active', 'active');
+    Route::post('/pppoe/remove', 'remove');
     Route::get('/pppoe/{page}', 'view');
 });
 

@@ -1,15 +1,15 @@
 @extends('app')
 
 @section('content')
-<div id="profile-table" class="flex flex-col h-[calc(100vh-4rem)]">
+<div id="table" class="flex flex-col h-[calc(100vh-4rem)]">
     <div class="flex items-center gap-2 px-4 md:px-6 py-4">
-        <h2 class="font-bold me-auto">Hotspot Profile</h2>
+        <h2 class="font-bold me-auto">PPPoE Users</h2>
         <div class="tooltip [--placement:bottom]">
             <button type="button" class="tooltip-toggle btn btn-square btn-soft btn-sm btn-add">
                 <span class="icon-[tabler--plus] size-5"></span>
             </button>
             <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                <span class="tooltip-body">Add Profile</span>
+                <span class="tooltip-body">Add User</span>
             </span>
         </div>
         <div class="input input-sm max-w-50">
@@ -21,13 +21,12 @@
     <div class="flex flex-col flex-1 px-4 md:px-6 pb-6">
         <div class="bg-base-100 flex flex-col flex-1 rounded-md shadow-base-300/20 shadow-sm">
             <div class="flex px-5 py-3 gap-2">
-                <div class="input input-sm w-auto ps-1">
+                <div class="input input-sm w-auto px-0">
                     <select class="select select-sm" data-datatable-page-entities>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
+                        <option value="10">10 / page</option>
+                        <option value="25">25 / page</option>
+                        <option value="50">50 / page</option>
                     </select>
-                    <span class="label-text my-auto">/page</span>
                 </div>
                 <button id="btn-remove" class="btn btn-soft btn-error btn-sm" disabled>Remove</button>
             </div>
@@ -35,7 +34,7 @@
                 <div class="inline-block min-w-full align-middle">
                     <div class="relative">
                         <table class="table min-w-full">
-                            <thead class="bg-base-100 sticky top-0 z-5">
+                            <thead class="bg-base-100 sticky top-0 z-5 shadow">
                                 <tr class="text-xs">
                                     <th scope="col" class="--exclude-from-ordering w-3.5 pe-0">
                                         <div class="flex h-5">
@@ -43,13 +42,11 @@
                                             <label for="table-checkbox-all" class="sr-only">Checkbox</label>
                                         </div>
                                     </th>
+                                    <th>Service</th>
                                     <th>Name</th>
-                                    <th>Rate Limit</th>
-                                    <th>Validity</th>
-                                    <th>Price</th>
-                                    <th>Shared</th>
-                                    <th>User Lock</th>
-                                    <th>Server Lock</th>
+                                    <th>Caller ID</th>
+                                    <th>Address</th>
+                                    <th>Uptime</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -83,10 +80,10 @@
         </div>
     </div>
 </div>
-<x-modal.hotspot-user-profile-form />
+<x-modal.pppoe-user-form />
 <x-modal.confirm />
 @endsection
 
 @section('js')
-@vite(['resources/js/pages/hotspot-profiles.js'])
+@vite(['resources/js/pages/pppoe/active.js'])
 @endsection

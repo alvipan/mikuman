@@ -111,16 +111,28 @@ class GETController extends Controller
 
     public function pppProfiles(Request $request) {
         $response = Mikrotik::request('/ppp/profile/print');
+        foreach ($response as $i => $v) {
+            $response[$i]['id'] = $response[$i]['.id'];
+            unset($response[$i]['.id']);
+        }
         return $this->json($response);
     }
 
     public function pppUsers(Request $request) {
-        $response = Mikrotik::request('/ppp/secret/print', $this->query($request));
+        $response = Mikrotik::request('/ppp/secret/print');
+        foreach ($response as $i => $v) {
+            $response[$i]['id'] = $response[$i]['.id'];
+            unset($response[$i]['.id']);
+        }
         return $this->json($response);
     }
 
     public function pppActive(Request $request) {
         $response = Mikrotik::request('/ppp/active/print');
+        foreach ($response as $i => $v) {
+            $response[$i]['id'] = $response[$i]['.id'];
+            unset($response[$i]['.id']);
+        }
         return $this->json($response);
     }
 

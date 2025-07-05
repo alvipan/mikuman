@@ -1,3 +1,6 @@
+import ApexCharts from "apexcharts";
+window.ApexCharts = ApexCharts;
+
 window.addEventListener("load", function () {
     const chartEl = document.querySelector("#traffic-chart");
     const chartConfig = {
@@ -155,10 +158,10 @@ window.addEventListener("load", function () {
             $.get("/get/hotspot/active", function (res) {
                 $("#hotspot-active").html(res.data.length);
             }),
-            $.get("/ppp/users", function (res) {
+            $.get("/get/pppoe/users", function (res) {
                 $("#ppp-users").html(res.length);
             }),
-            $.get("/ppp/active", function (res) {
+            $.get("/get/pppoe/active", function (res) {
                 $("#ppp-active").html(res.length);
             }),
             $.get("/get/report?summary=", function (res) {
