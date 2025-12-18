@@ -5,11 +5,10 @@
 }
 @plugin "@iconify/tailwind4";
 @import "flyonui/variants.css";
+@source "../node_modules/flyonui/flyonui.js";
 @import "flyonui/src/vendor/datatables.css";
 @import "flyonui/src/vendor/apexcharts.css";
-@import "flatpickr/dist/flatpickr.css";
 @import "flyonui/src/vendor/flatpickr.css";
-@import "apexcharts/src/assets/apexcharts.css";
 
 @font-face {
     font-family: Titillium;

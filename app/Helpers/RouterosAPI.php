@@ -26,9 +26,7 @@ class RouterosAPI
     var $timeout   = 3;     //  Connection attempt timeout and data read timeout
     var $attempts  = 5;     //  Connection attempt count
     var $delay     = 3;     //  Delay between connection attempts in seconds
-
     var $conn      = false; //  Test connection
-
     var $socket;            //  Variable for storing socket resource
     var $error_no;          //  Variable for storing connection error number, if any
     var $error_str;         //  Variable for storing connection error text, if any
@@ -159,7 +157,6 @@ class RouterosAPI
             $this->debug('Connected...');
         } else {
             $this->debug('Error...');
-
         }
         return $this->connected;
     }

@@ -1,13 +1,9 @@
 import "./bootstrap";
 import "flyonui/flyonui";
-import "../../node_modules/flyonui/dist/helper-apexcharts.js";
-import { HSOverlay } from "flyonui/flyonui";
+import jQuery from "jquery";
+window.$ = window.jQuery = jQuery;
 
-$.ajaxSetup({
-    headers: {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    },
-});
+window.table;
 
 window.showAlert = function (t, m, i) {
     const alert = $("#alert").find(".alert-" + t);
@@ -22,7 +18,6 @@ window.formatBytes = function (bytes, decimals = 0) {
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ["Bytes", "KiB", "MiB", "GiB"];
-
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
@@ -43,60 +38,153 @@ window.formatTimes = function (x) {
     return (d > 0 ? d + "d " : "") + h + ":" + m + ":" + s;
 };
 
-$.get("/get/expire-monitor", function (res) {
-    if (res.success) {
-        if (res.data.mikuman <= 0) {
-            HSOverlay.open("#expire-monitor-form-modal");
+document.addEventListener('livewire:init', () => 
+{
+    let selected = [];
+
+    Livewire.on('alert', (e) => {
+        showAlert(e[0]['type'], e[0]['message']);
+        console.log('err', e[0]['message'])
+    });
+
+    Livewire.on('update-data', (evn) => {
+        table.dataTable.clear().rows.add(evn.data).draw();
+        $("#btn-remove").attr("disabled", true);
+        console.log('info', evn.data)
+    });
+
+    $.get("/get/expire-monitor", function (res) {
+        if (res.success) {
+            if (res.data.mikuman <= 0) {
+                HSOverlay.open("#expire-monitor-form-modal");
+            }
+        }
+    });
+
+    let pathList = [
+        '/hotspot/profiles',
+        '/hotspot/users',
+        '/hotspot/active',
+        '/pppoe/profiles',
+        '/pppoe/secrets',
+        '/pppoe/active'
+    ];
+
+    if (pathList.includes(location.pathname)) 
+    {
+        $('#datatable').on('change','thead input[type="checkbox"]', function() {
+            $('tbody input[type="checkbox"]').trigger("change");
+        });
+
+        $('#datatable').on('change','tbody input[type="checkbox"]', function() {
+            const row = $(this).closest("tr");
+            if ($(this).is(":checked")) {
+                row.addClass("selected");
+            } else {
+                row.removeClass("selected");
+            }
+            $("#btn-remove").attr(
+                "disabled",
+                table.dataTable.rows(".selected").data().length <= 0
+            );
+        });
+
+        $("#content").on("click", "#btn-remove", function () {
+            selected = table.dataTable.rows(".selected").data().toArray();
+            remove();
+        });
+
+        $("#content").on("click", ".btn-remove", function () {
+            const row = $(this).closest("tr");
+            selected = [];
+            selected.push(table.dataTable.row(row).data());
+            remove();
+        });
+
+        $("#confirm-modal").on("click", ".btn-confirm", function () {
+            Livewire.dispatch('remove', { selected: selected });
+        });
+
+        function remove() {
+            HSOverlay.open("#confirm-modal");
+            const modal = $("#confirm-modal");
+            const title = modal.find(".title");
+            const body = modal.find(".modal-body");
+
+            title.html("Confirmation");
+            body.html(
+                '<p class="mb-2">The items below will be removed.</p>' +
+                '<items></items>'
+            );
+
+            $.each(selected, function (i, v) {
+                body.find("items").append(
+                    '<span class="badge badge-soft badge-error badge-sm me-1">' +
+                    (v.name ? v.name : v.user) +
+                    '</span>'
+                );
+            });
         }
     }
 });
 
-$("#expire-monitor-form").on("submit", function (e) {
-    e.preventDefault();
-    const form = $(this);
-    const data = form.serializeArray();
-    const btn = form.find(".btn-submit");
-    const btnText = btn.html();
+document.addEventListener('livewire:navigated', () => {
 
-    btn.attr("disabled", true).html(
-        '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
-    );
-
-    $.post("/post/expire-monitor", data, function (res) {
-        if (res.success) {
-            HSOverlay.close("#expire-monitor-form-modal");
-            showAlert("success", res.message);
-            btn.attr("disabled", false).html(btnText);
-        }
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
     });
-});
 
-$("#setting-theme").on("change", function () {
-    $("html").attr("data-theme", $(this).val());
-});
+    $("#expire-monitor-form").on("submit", function (e) {
+        e.preventDefault();
+        const form = $(this);
+        const data = form.serializeArray();
+        const btn = form.find(".btn-submit");
+        const btnText = btn.html();
 
-$("#setting-currency").on("change", function () {
-    $(".currency").html($(this).val());
-});
+        btn.attr("disabled", true).html(
+            '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
+        );
 
-$("#form-setting").on("submit", function (e) {
-    e.preventDefault();
-    const form = $(this);
-    const data = form.serializeArray();
-    const btn = form.find(".btn-submit");
-    const url = "/router/edit";
-
-    btn.attr("disabled", true).html(
-        '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
-    );
-
-    $.post(url, { data: data }, function (res) {
-        if (res.success) {
-            showAlert("success", "Changes have been saved.");
-        } else {
-            showAlert("error", res.message);
-        }
-
-        btn.attr("disabled", false).html("Save changes");
+        $.post("/post/expire-monitor", data, function (res) {
+            if (res.success) {
+                HSOverlay.close("#expire-monitor-form-modal");
+                showAlert("success", res.message);
+                btn.attr("disabled", false).html(btnText);
+            }
+        });
     });
+
+    $("#setting-theme").on("change", function () {
+        $("html").attr("data-theme", $(this).val());
+    });
+
+    $("#setting-currency").on("change", function () {
+        $(".currency").html($(this).val());
+    });
+
+    $("#form-setting").on("submit", function (e) {
+        e.preventDefault();
+        const form = $(this);
+        const data = form.serializeArray();
+        const btn = form.find(".btn-submit");
+        const url = "/router/edit";
+
+        btn.attr("disabled", true).html(
+            '<span class="icon-[svg-spinners--90-ring-with-bg] size-5"></span>'
+        );
+
+        $.post(url, { data: data }, function (res) {
+            if (res.success) {
+                showAlert("success", "Changes have been saved.");
+            } else {
+                showAlert("error", res.message);
+            }
+
+            btn.attr("disabled", false).html("Save changes");
+        });
+    });
+
+    HSStaticMethods.autoInit();
 });

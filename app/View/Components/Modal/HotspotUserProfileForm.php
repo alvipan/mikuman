@@ -24,7 +24,7 @@ class HotspotUserProfileForm extends Component
     {
         $data = [
             'pools' => Mikrotik::request('/ip/pool/print'),
-            'queues' => Mikrotik::request("/queue/simple/print", array("?dynamic" => "false",))
+            'queues' => Mikrotik::request("/queue/simple/print", ["?dynamic" => "false"])
         ];
         return view('components.modal.hotspot-user-profile-form', $data);
     }

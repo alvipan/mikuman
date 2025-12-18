@@ -12,24 +12,19 @@ class Mikrotik
 
     public static function connect(Router $router) 
     {
-        try {
-            self::$client = new RouterosAPI();
-            self::$client->debug = false;
-            self::$client->connect(
-                $router->host,
-                $router->user,
-                Crypt::decryptString($router->pass)
-            );
-            return true;
-        } catch (\Throwable $e) {
-            return false;
-        }
+        self::$client = new RouterosAPI();
+        self::$client->debug = false;
+        return self::$client->connect(
+            $router->host,
+            $router->user,
+            Crypt::decryptString($router->pass)
+        );
     }
 
     public static function request($path, $conditions = array())
     {
         if (!session('router')) {
-            return false;
+            return null;
         }
 
         $router = Router::firstWhere('host', session('router'));
@@ -39,7 +34,7 @@ class Mikrotik
             $result = self::$client->comm($path, $conditions);
             return $result;
         } catch (\Throwable $e) {
-            return false;
+            return null;
         } 
     }
 }

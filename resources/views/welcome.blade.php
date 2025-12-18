@@ -56,3 +56,7 @@
 <border class="
     border-red-500
     "/>
+<icon class="
+    icon-[tabler--logout]
+    icon-[tabler--help]
+    " />

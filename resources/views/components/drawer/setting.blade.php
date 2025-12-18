@@ -1,8 +1,8 @@
-<div id="overlay-setting" class="overlay overlay-open:translate-x-0 drawer drawer-end hidden max-w-72" role="dialog" tabindex="-1">
+<div id="overlay-setting" class="overlay overlay-open:translate-x-0 drawer drawer-end hidden max-w-72" role="dialog" tabindex="-1" wire:ignore>
     <form id="form-setting">
-        <div class="drawer-header">
+        <div class="drawer-header flex items-center">
             <h3 class="drawer-title">Settings</h3>
-            <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#overlay-setting">
+            <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3" aria-label="Close" data-overlay="#overlay-setting">
                 <span class="icon-[tabler--x] size-5"></span>
             </button>
         </div>
@@ -23,6 +23,7 @@
                     <option value="soft" @selected($router->theme == 'soft')>Soft</option>
                     <option value="valorant" @selected($router->theme == 'valorant')>Valorant</option>
                 </select>
+                <span class="helper-text">Select interface theme.</span>
             </div>
             <div class="">
                 <label class="label-text" for="setting-name">Name</label>
