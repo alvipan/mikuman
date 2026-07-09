@@ -24,7 +24,7 @@
         @fluxAppearance
     </head>
 
-    <body class="h-full bg-white font-sans text-zinc-900 antialiased dark:bg-zinc-900 dark:text-zinc-100">
+    <body class="h-full bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-zinc-900 dark:text-zinc-100">
         <div class="flex min-h-screen flex-col items-center sm:justify-center sm:pt-0">
 
             {{-- Isi Konten Setup --}}

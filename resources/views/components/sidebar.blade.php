@@ -1,5 +1,4 @@
-<flux:sidebar sticky collapsible="mobile"
-    class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+<flux:sidebar sticky collapsible="mobile" class="border-r border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
     <flux:sidebar.header>
         <flux:sidebar.brand href="#" logo="https://fluxui.dev/img/demo/logo.png"
             logo:dark="https://fluxui.dev/img/demo/dark-mode-logo.png" name="Mikuman" />

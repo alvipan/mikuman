@@ -19,7 +19,7 @@
 
     </head>
 
-    <body class="min-h-screen bg-white antialiased dark:bg-zinc-800">
+    <body class="min-h-screen bg-zinc-50 antialiased dark:bg-zinc-800">
         <x-sidebar />
 
         <x-navbar />
