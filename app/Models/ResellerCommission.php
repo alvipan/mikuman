@@ -3,30 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResellerCommission extends Model
 {
     protected $fillable = [
         'reseller_id',
-        'hotspot_user_id',
-        'type',
+        'voucher_id',
         'amount',
-        'notes',
-        'created_by',
+        'status',
+        'paid_at'
     ];
-    
-    public function reseller()
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
+    ];
+
+    public function reseller(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'reseller_id');
+        return $this->belongsTo(Reseller::class);
     }
 
-    public function hotspotUser()
+    public function voucher(): BelongsTo
     {
-        return $this->belongsTo(HotspotUser::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Voucher::class);
     }
 }

@@ -4,7 +4,10 @@ namespace App\Services\Mikrotik;
 
 use App\Models\Router;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Pool;
+use Throwable;
 
 class MikrotikService
 {
@@ -17,37 +20,22 @@ class MikrotikService
 
     protected function client()
     {
-        return Http::withBasicAuth(
-                $this->router->username,
-                $this->router->password
-            )
-            ->baseUrl("http://{$this->router->host}/rest")
-            ->timeout(5)
+        return Http::withBasicAuth($this->router->username, $this->router->password)
+            ->baseUrl($this->router->base_url)
+            ->withoutVerifying()
+            ->timeout(10)
             ->acceptJson();
     }
 
     protected function request(string $method, string $endpoint, array $data = [])
     {
         try {
-
             $response = $this->client()->$method($endpoint, $data);
-
-            if ($response->failed()) {
-                throw new RequestException($response);
-            }
-
+            if ($response->failed()) throw new RequestException($response);
             return $response->json();
-
-        } catch (\Throwable $e) {
-
-            logger()->error('MIKROTIK ERROR', [
-                'message' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
+        } catch (Throwable $e) {
+            Log::error("MIKROTIK ERROR [{$this->router->name}] {$endpoint}: " . $e->getMessage());
+            return ['error' => $e->getMessage()];
         }
     }
 
@@ -55,106 +43,176 @@ class MikrotikService
     {
         return $this->request('get', $endpoint);
     }
-
-    public function put(string $endpoint, array $data = [])
-    {
-        return $this->request('put', $endpoint, $data);
-    }
-
-    public function patch(string $endpoint, array $data = [])
-    {
-        return $this->request('patch', $endpoint, $data);
-    }
-
     public function post(string $endpoint, array $data = [])
     {
         return $this->request('post', $endpoint, $data);
     }
-    
+    public function patch(string $endpoint, array $data = [])
+    {
+        return $this->request('patch', $endpoint, $data);
+    }
+    public function put(string $endpoint, array $data = [])
+    {
+        return $this->request('put', $endpoint, $data);
+    }
     public function delete(string $endpoint)
     {
         return $this->request('delete', $endpoint);
     }
 
-    protected function minifyScript(string $script): string
+    public function isError($result): bool
     {
-        $script = preg_replace('/\s+/', ' ', $script);
-        return trim($script);
+        return is_array($result) && isset($result['error']);
     }
 
-    public function ensureHotspotExpireScheduler()
+    public function listResource(string $endpoint): array
     {
-        $schedulers = $this->get('/system/scheduler');
+        $result = $this->get($endpoint);
+        return is_array($result) && !$this->isError($result) ? $result : [];
+    }
 
-        $exists = collect($schedulers)->contains('name', 'MIKUMAN-HOTSPOT-EXPIRE');
+    public function findByName(array $items, string $name): ?array
+    {
+        foreach ($items as $item) {
+            if (($item['name'] ?? null) === $name) return $item;
+        }
+        return null;
+    }
 
-        if ($exists) {
-            return;
+    public function ensureResource(string $endpoint, string $name, array $data = []): array
+    {
+        $items = $this->listResource($endpoint);
+        $existing = $this->findByName($items, $name);
+
+        if ($existing) {
+            if (empty($data)) return ['success' => true, 'action' => 'exists'];
+
+            $result = $this->post($endpoint . '/set', array_merge(['numbers' => $existing['.id']], $data));
+            if ($this->isError($result)) throw new \RuntimeException("Gagal update {$name}: " . ($result['error'] ?? 'Unknown'));
+            return ['success' => true, 'action' => 'updated'];
         }
 
-        $script = '
-            :local now ([/system clock get date]." ".[/system clock get time]);
-
-            :foreach i in=[/ip hotspot user find where comment~"EXP"] do={
-
-                :local c [/ip hotspot user get $i comment];
-                :local e [:pick $c 4 [:len $c]];
-
-                :if ($now>$e) do={
-                    /ip hotspot user remove $i;
-                };
-            };
-        ';
-
-        $this->post('/system/scheduler/add', [
-            'name' => 'MIKUMAN-HOTSPOT-EXPIRE',
-            'interval' => '5m',
-            'on-event' => $this->minifyScript($script)
-        ]);
+        $result = $this->put($endpoint, array_merge(['name' => $name], $data));
+        if ($this->isError($result)) throw new \RuntimeException("Gagal buat {$name}: " . ($result['error'] ?? 'Unknown'));
+        return ['success' => true, 'action' => 'created'];
     }
 
-    public function ensurePppoeExpireScheduler()
+    // --- LANGKAH-LANGKAH PROVISIONING ---
+
+    public function stepCheckRouter()
     {
-        $schedulers = $this->get('/system/scheduler');
+        $res = $this->get('/system/resource');
+        if ($this->isError($res)) throw new \RuntimeException($res['error']);
+        return true;
+    }
 
-        $exists = collect($schedulers)->contains('name', 'MIKUMAN-PPPOE-EXPIRE');
+    public function stepSetupBridge($bridgeName)
+    {
+        return $this->ensureResource('/interface/bridge', $bridgeName, ['comment' => 'mikuman-managed']);
+    }
 
-        if ($exists) {
-            return;
+    public function stepSetupPool($hsSubnet, $pppoeSubnet, $lanIp)
+    {
+        $convertCidrToRange = function ($cidr) {
+            $parts = explode('/', $cidr);
+            $ip = $parts[0];
+            $prefix = (int) ($parts[1] ?? 24);
+            $octets = explode('.', $ip);
+            if ($prefix == 16) return "{$octets[0]}.{$octets[1]}.0.1-{$octets[0]}.{$octets[1]}.255.254";
+            return "{$octets[0]}.{$octets[1]}.{$octets[2]}.2-{$octets[0]}.{$octets[1]}.{$octets[2]}.254";
+        };
+
+        $this->ensureResource('/ip/pool', 'mikuman-pool-hs', ['ranges' => $convertCidrToRange($hsSubnet)]);
+        $this->ensureResource('/ip/pool', 'mikuman-pool-pppoe', ['ranges' => $convertCidrToRange($pppoeSubnet)]);
+        $this->ensureResource('/ip/pool', 'mikuman-pool-local', ['ranges' => trim(explode('/', $lanIp)[0])]);
+        return true;
+    }
+
+    public function stepSetupHotspot($bridgeName)
+    {
+        $this->ensureResource('/ip/hotspot/profile', 'mikuman-hs-profile', [
+            'hotspot-address' => '0.0.0.0',
+            'dns-name' => 'login.wifi',
+            'use-radius' => 'yes'
+        ]);
+        $this->ensureResource('/ip/hotspot', 'mikuman-hotspot', [
+            'interface' => $bridgeName,
+            'profile' => 'mikuman-hs-profile',
+            'address-pool' => 'mikuman-pool-hs',
+            'disabled' => 'no'
+        ]);
+        return true;
+    }
+
+    public function stepSetupPppoe($bridgeName)
+    {
+        $this->ensureResource('/ppp/profile', 'mikuman-ppp-profile', [
+            'local-address' => 'mikuman-pool-local',
+            'remote-address' => 'mikuman-pool-pppoe'
+        ]);
+
+        $servers = $this->listResource('/interface/pppoe-server/server');
+        $existing = null;
+        foreach ($servers as $srv) {
+            if (($srv['service-name'] ?? '') === 'mikuman-pppoe') {
+                $existing = $srv;
+                break;
+            }
         }
 
-        $script = '
-            :local now ([/system clock get date]." ".[/system clock get time]);
-
-            :foreach i in=[/ppp secret find where comment~"EXP"] do={
-
-                :local c [/ppp secret get $i comment];
-                :local e [:pick $c 4 [:len $c]];
-                :local user [/ppp secret get $i name];
-
-                :if ($now>$e) do={
-
-                    :if ([/ppp secret get $i disabled] = false) do={
-
-                        :log warning ("MIKUMAN PPPoE EXPIRED: " . $user);
-
-                        /ppp active remove [find name=$user];
-                        /ppp secret set $i disabled=yes;
-                    };
-                };
-            };
-        ';
-
-        $this->post('/system/scheduler/add', [
-            'name' => 'MIKUMAN-PPPOE-EXPIRE',
-            'interval' => '5m',
-            'on-event' => $this->minifyScript($script),
-        ]);
+        if ($existing) {
+            $res = $this->post('/interface/pppoe-server/server/set', ['numbers' => $existing['.id'], 'interface' => $bridgeName, 'default-profile' => 'mikuman-ppp-profile', 'disabled' => 'no']);
+            if ($this->isError($res)) throw new \RuntimeException("Gagal update PPPoE: " . $res['error']);
+        } else {
+            $res = $this->put('/interface/pppoe-server/server', ['service-name' => 'mikuman-pppoe', 'interface' => $bridgeName, 'default-profile' => 'mikuman-ppp-profile', 'disabled' => 'no']);
+            if ($this->isError($res)) throw new \RuntimeException("Gagal buat PPPoE: " . $res['error']);
+        }
+        return true;
     }
 
-    public function ensureEnvironment()
+    public function stepSetupRadius($radiusIp, $radiusSecret)
     {
-        $this->ensureHotspotExpireScheduler();
-        $this->ensurePppoeExpireScheduler();
+        $radiusConfigs = $this->listResource('/radius');
+        foreach ($radiusConfigs as $rc) {
+            if (isset($rc['comment']) && $rc['comment'] === 'mikuman-radius') $this->delete('/radius/' . rawurlencode($rc['.id']));
+        }
+        $res = $this->put('/radius', ['service' => 'hotspot,ppp', 'address' => $radiusIp, 'secret' => $radiusSecret, 'comment' => 'mikuman-radius']);
+        if ($this->isError($res)) throw new \RuntimeException("Gagal setup RADIUS: " . $res['error']);
+        $this->patch('/ppp/aaa', ['use-radius' => 'yes']);
+        return true;
+    }
+
+    public function stepSetupWlan($ssid)
+    {
+        if (!$ssid) return 'Skip';
+        $wireless = $this->listResource('/interface/wireless');
+        foreach ($wireless as $wlan) {
+            $this->post('/interface/wireless/set', ['numbers' => $wlan['.id'], 'ssid' => $ssid, 'mode' => 'ap-bridge', 'disabled' => 'no']);
+        }
+        return true;
+    }
+
+    public static function getStatuses($routers): array
+    {
+        $statuses = [];
+        foreach ($routers as $router) $statuses[$router->id] = 'offline';
+        $active = $routers->where('is_active', true)->values();
+        if ($active->isEmpty()) return $statuses;
+
+        try {
+            $responses = Http::pool(function (Pool $pool) use ($active) {
+                foreach ($active as $r) {
+                    $pool->as((string) $r->id)->withBasicAuth($r->username, $r->password)
+                        ->withoutVerifying()->timeout(4)->get(rtrim($r->base_url, '/') . '/system/resource');
+                }
+            });
+            foreach ($active as $r) {
+                if (isset($responses[(string) $r->id]) && $responses[(string) $r->id]->successful()) {
+                    $statuses[$r->id] = 'online';
+                }
+            }
+        } catch (Throwable $e) {
+        }
+        return $statuses;
     }
 }

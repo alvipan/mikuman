@@ -1,125 +1,31 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
+// Redirect halaman awal ke dashboard (atau login jika belum auth)
 Route::get('/', function () {
-    if (User::count() === 0) {
-        return redirect()->route('setup');
-    }
-    return redirect()->route('login');
+    return redirect('/dashboard');
 });
 
-Route::get('/logout', function () {
-    Auth::logout();
+Route::middleware('guest')->group(function () {
+    Route::livewire('/login', 'pages::auth.login')->name('login');
+});
 
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+// Rute Auth (Hanya bisa diakses setelah login)
+Route::middleware('auth')->group(function () {
+    Route::livewire('/dashboard', 'pages::dashboard')->name('dashboard');
+    Route::livewire('/routers', 'pages::routers.index')->name('routers.index');
 
-    return redirect('/');
-})->name('logout');
+    // Rute Hotspot
+    // Route::livewire('/hotspot/packages', 'pages::hotspots.packages')->name('hotspot.packages');
+    Route::livewire('/hotspot/vouchers', 'pages::hotspots.vouchers')->name('hotspot.vouchers');
+    // Route::livewire('/hotspot/active', 'pages::hotspots.active')->name('hotspot.active');
 
-Route::livewire('/setup', 'pages::setup.index')->middleware('not_installed')->name('setup');
-
-Route::livewire('/login', 'pages::auth.login')->middleware(['installed','guest'])->name('login');
-
-Route::middleware('auth')
-    ->prefix('vouchers')
-    ->name('vouchers.')
-    ->group(function () {
-
-        Route::livewire('/sell', 'pages::vouchers.sell')->name('sell');
-    });
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('dashboard')
-    ->name('dashboard.')
-    ->group(function () {
-
-        // router list
-        Route::livewire('/', 'pages::dashboard.index')
-            ->name('index');
-    });
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('routers')
-    ->name('routers.')
-    ->group(function () {
-
-        // router list
-        Route::livewire('/', 'pages::routers.index')
-            ->name('index');
-
-        // router context
-        Route::middleware('connected')->group(function () {
-
-            Route::livewire('/dashboard', 'pages::routers.dashboard')
-                ->name('dashboard');
-
-        });
-    });
-
-Route::middleware(['auth'])
-    ->prefix('resellers')
-    ->name('resellers.')
-    ->group(function () {
-
-        Route::livewire('/app', 'pages::resellers.app.index')->name('app.index');
-        
-        Route::middleware('admin')->group(function (){
-            Route::livewire('/', 'pages::resellers.index')->name('index');
-            Route::livewire('/{reseller}', 'pages::resellers.detail')->name('detail');
-        });
-    });
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('hotspot')
-    ->name('hotspot.')
-    ->group(function () {
-
-        Route::livewire('/', 'pages::hotspot.index')->name('index');
-    });
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('pppoe')
-    ->name('pppoe.')
-    ->group(function () {
-
-        Route::livewire('/', 'pages::pppoe.index')->name('index');
-        Route::livewire('/customer/{customer}', 'pages::pppoe.customer')->name('customer');
-    });
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('reports')
-    ->name('reports.')
-    ->group(function () {
-
-        Route::livewire('/', 'pages::reports.index')->name('index');
-    });
-
-Route::get('/print/vouchers', function () {
-
-    $batch = request('batch');
-    $color = request('color', 'blue');
-    $showQr = request('qr', 0);
-
-    $vouchers = \App\Models\HotspotUser::with(['profile', 'router'])
-        ->where('batch', $batch)
-        ->get();
-
-    return view('print.vouchers', compact(
-        'vouchers',
-        'color',
-        'batch',
-        'showQr'
-    ));
-})->name('vouchers.print');
-
-Route::middleware(['auth', 'admin'])
-    ->prefix('settings')
-    ->name('settings.')
-    ->group(function () {
-
-        Route::livewire('/', 'pages::settings.index')->name('index');
-    });
+    // Route logout bawaan
+    Route::post('/logout', function () {
+        auth()->logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect('/login');
+    })->name('logout');
+});

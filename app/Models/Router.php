@@ -3,34 +3,45 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Router extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
-        'host',
+        'address',
+        'protocol',
         'port',
         'username',
         'password',
+        'is_active',
+        'lan_ip',
+        'lan_interface',
+        'wlan_ssid',
+        'hotspot_subnet',
+        'pppoe_subnet'
     ];
 
-    public function resellers()
+    protected $casts = [
+        'password' => 'encrypted',
+        'is_active' => 'boolean',
+    ];
+
+    /**
+     * Mendapatkan Base URL untuk REST API RouterOS
+     */
+    public function getBaseUrlAttribute(): string
     {
-        return $this->hasMany(User::class);
+        return "{$this->protocol}://{$this->address}:{$this->port}/rest";
     }
 
-    public function pppoeProfiles()
+    public function secrets(): HasMany
     {
-        return $this->hasMany(PppoeProfile::class);
+        return $this->hasMany(Secret::class);
     }
 
-    public function pppoeSecrets()
+    public function vouchers(): HasMany
     {
-        return $this->hasMany(PppoeSecret::class);
+        return $this->hasMany(Voucher::class);
     }
 }

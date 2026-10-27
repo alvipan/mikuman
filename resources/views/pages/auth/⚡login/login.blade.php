@@ -1,25 +1,27 @@
-<div class="flex min-h-screen items-center justify-center p-4">
+<div class="mx-auto mt-20 w-full max-w-md">
+    <div class="rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">
+                {{ \App\Models\Setting::get('app_name', 'Mikuman') }}</h1>
+            <p class="mt-2 text-sm text-zinc-500">Masuk ke panel manajemen</p>
+        </div>
 
-    <flux:card class="w-full max-w-sm space-y-6">
+        <form wire:submit="login" class="space-y-6">
+            <flux:input wire:model="username" label="Username" type="text" placeholder="Masukkan username Anda"
+                required />
 
-        <flux:heading size="lg" class="text-center">Mikuman</flux:heading>
+            <flux:input wire:model="password" label="Password" type="password" placeholder="Masukkan password Anda"
+                required />
 
-        <flux:separator text="Login to Mikuman" />
+            <div class="flex items-center justify-between">
+                <flux:checkbox wire:model="remember" label="Ingat saya" />
+            </div>
 
-        <form wire:submit="login" class="space-y-4">
-
-            <flux:input label="Username" wire:model="username" />
-
-            <flux:input label="Password" type="password" wire:model="password" viewable />
-
-            <flux:checkbox wire:model="remember" label="Remember me" />
-
-            <flux:button type="submit" class="w-full">
-                Login
-            </flux:button>
-
+            <div class="flex items-center justify-end">
+                <flux:button type="submit" variant="primary" class="w-full">
+                    Masuk
+                </flux:button>
+            </div>
         </form>
-
-    </flux:card>
-
+    </div>
 </div>

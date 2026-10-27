@@ -1,42 +1,28 @@
 <?php
 
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
-new class extends Component
+new #[Layout('layouts::auth')] #[Title('Login')] class extends Component
 {
-    public $username;
-    public $password;
-    public $remember = false;
+    public string $username = '';
+    public string $password = '';
+    public bool $remember = false;
 
     public function login()
     {
-        $this->validate([
-            'username' => ['required'],
-            'password' => ['required'],
+        $credentials = $this->validate([
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt([
-            'username' => $this->username,
-            'password' => $this->password
-        ], $this->remember)) {
-
-            $this->dispatch('toast', [
-                'type' => 'error',
-                'message' => 'Username atau password salah'
-            ]);
-
-            return;
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password'], 'is_active' => true], $this->remember)) {
+            session()->regenerate();
+            return redirect()->intended('/dashboard');
         }
 
-        session()->regenerate();
-
-        return redirect()->intended('/dashboard');
-    }
-
-    public function render()
-    {
-        return $this->view()
-            ->layout('layouts.guest')->title('Login');
+        $this->addError('username', 'Kredensial tidak valid atau akun tidak aktif.');
     }
 };
